@@ -1,0 +1,17 @@
+# Card metadata consumed by https://amishchadha.com
+name: RootMesh
+slug: rootmesh
+area: Agriculture
+status: concept          # concept | design | prototype | tested | released
+shortlisted: false
+pitch: >-
+  Solar-powered stakes that measure soil moisture, temperature and EC and report over LoRa to a single gateway and dashboard.
+problem: >-
+  Irrigation decisions rely on guesswork without cheap, field-hardy soil sensing.
+budget_usd: 300
+difficulty: 2  # 1 easiest, 5 hardest
+hero_image: media/hero.png
+licenses:
+  hardware: CERN-OHL-S-2.0
+  software: MIT
+tags: [agriculture, open-hardware, cern-ohl-s]
