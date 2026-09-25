@@ -75,3 +75,65 @@ Requirements not met or at risk:
 ### Recommended next step
 
 Review this note and the media, then decide items 1 and 2. If approved, run `/advance-trl3` to check the energy, airtime, link and EC circuit numbers by calculation and produce the parametric model and drawing sheet.
+
+## Session 2026-09-25: TRL 3
+
+Amish approved all TRL 2 recommendations on 2026-09-25 ("proceed with all of your recommendations across all batches. Make sure we don't proceed to TRL 4 on any of them."). This session advanced RootMesh to TRL 3 and stopped there.
+
+### What was done
+
+- `docs/decisions/0001-trl2-review-decisions.md` (RMS-DDR-001 v0.1): the nine decided items (D1 to D9) and the one open item (O1).
+- `docs/04-calcs/01-sizing.md` (RMS-CAL-001 v0.1) and `docs/04-calcs/sizing.py`: airtime, energy, radio link, EC circuit, sensing geometry, thermal and sealing, installation force and cost, with a results table for R1 to R14. The script imports the model's parameters, reads the BOM and `project.yaml`, and prints every number the note quotes.
+- `cad/src/model.py`: parametric build123d model of one installed stake (head, panel, controller, tube, cell, fin, probes, EC rods, temperature probe, seals, marker rod, flag, antenna and lead). Exports `cad/step/` and `cad/stl/`: `rootmesh-stake-assembly`, `head-enclosure`, `sensor-fin`, `stake-tube`.
+- `cad/src/sheets.py` and `cad/drawings/RMS-DWG-001.svg`, `.pdf`, `.png`: general arrangement at Rev P1, orthographic views at 1:5, installed elevation at 1:20, isometric, main dimensions and interfaces. The concept sheet keeps RMS-DWG-010, so RMS-DWG-001 was free. The sheet carries "CONCEPT, NOT FOR FABRICATION" and "PRELIMINARY, NOT FOR FABRICATION".
+- `bom/bom.csv` and `bom/bom-notes.md`: every line priced with a supplier or supplier type; antenna and feed now $7.00 (on the marker rod), seals $5.00 (vent added). Pilot set $256.50 against $300.
+- `cad/src/concept_media.py` now builds the media from `model.py`; all media refreshed (hero, blueprint, cutaway, exploded, flow, `model.glb`, `viewer.html`) and checked by eye. Temporary `media/_views*` folders removed.
+- RMS-PRB-001, RMS-PRC-001 and RMS-REQ-001 revised to v0.3; `README.md` and `project.yaml` (trl 3, trl_target 3, evidence list) updated. Pitch, problem and `budget_usd` unchanged.
+- Model fix found on the way: the TRL 2 massing model tilted the panel away from the equator; the parametric model faces it toward +X as the precis says.
+
+### Requirements (RMS-CAL-001, Table 6)
+
+Counts: 0 not met, 5 at risk, 1 not verifiable at TRL 3, 8 met.
+
+| ID | Status | Key number |
+| --- | --- | --- |
+| R1 moisture | At risk | Depths 150 and 300 mm met by the model; ±3 % VWC unverifiable on paper |
+| R5 range | At risk | 13.5 dB margin at 1 km with the antenna at 1 m; 50 to 100 m of tall crop takes 13 to 19 dB |
+| R9 temperature | At risk | Head about 64 °C at 45 °C air (limit 60 °C; parts rated 85 °C); cell up to about 47 °C in bare hot soil (limit 40 °C) |
+| R10 installation | At risk | Push force about 520 N in moist loam, about 1.8 kN in firm dry loam; one person gives about 500 N |
+| R14 probe life | At risk | 12 months buried depends on the epoxy edge seal |
+| R8 sealing | Not verifiable at TRL 3 | Sealed head would see about 15 kPa daily thermal pumping; ePTFE vent added |
+| R2, R3, R4, R6, R7, R11, R12, R13 | Met | 26.7 s/day airtime at SF10; 2.58 mAh/day need, 186 days dark, 19 times need at 1 sun hour; 1.92 Wh cell; EC circuit error under 2 %; head 171 mm; $55.50 per stake |
+
+Corrections to TRL 2 figures: days on the cell fell from about 240 to 186 (self-discharge), the harvest ratio from about 70 to 58 times, and the pilot set rose from about $246 to $256.50.
+
+### Decisions recorded (RMS-DDR-001)
+
+Decided by Amish, 2026-09-25: go with recommendation.
+
+- D1 solar panel with rechargeable cell (pitch kept); D2 antenna on the marker rod at about 1 m; D3 The Things Network with a TTIG-class gateway for the pilot; D4 $300 read as a pilot set of three stakes and a gateway (`budget_usd` unchanged, written into R12); D5 LiFePO4; D6 two moisture depths; D7 modified hobby capacitive probes; D8 Wio-E5 (STM32WLE5); D9 20 min default interval.
+- Requirement changes that follow: R4 redefined around the 20 min default, R5 for the antenna on the rod, R11 so that only the rigid head is held to 300 mm, R12 and R13 name the decisions. No target was relaxed.
+- The portfolio SwapCell decisions do not apply; RootMesh uses no SwapCell pack.
+
+### Still awaiting Amish
+
+- O1: first users and region for co-design (market garden, orchard, research farm or extension program), which also sets EU868 or US915. No recommendation was made; co-design partners are to be picked per area later.
+
+### Safety concerns
+
+- LiFePO4 cell (1.92 Wh): may reach about 47 °C in bare, hot soil; the charger's 45 °C cut-off only stops charging. Fused (PTC), charging blocked below 0 °C.
+- Sealed head: about 15 kPa daily pressure swing without a vent; ePTFE vent added.
+- Machinery strikes and trips: flagged marker rod; the antenna lead on the rod is a snag point; pull stakes before tillage.
+- Installation: up to about 1.8 kN in firm soil; do not hammer on or stand on the head.
+- Pointed fin tip and electrodes; epoxy and coating fumes; readings inform, not replace, the grower's judgment.
+
+### Citations and other notes
+
+- The TRL 2 note listed no unchecked citations. The module currents that note flagged were checked against the Seeed Studio Wio-E5 module page (111 mA at +22 dBm, 6.7 mA receive, 2.1 µA sleep) and cited in RMS-CAL-001.
+- No TRL 4 material exists in the repo (`electronics/` and `firmware/` are empty; `build-log/` holds only its README). None was created.
+
+### Recommended next step
+
+TRL 4 is on hold by Amish's instruction; this repo stops at TRL 3. Useful paper work that stays within TRL 3: decide O1 (first users and region), then consider design responses to the at-risk items, such as a deeper cell position or soil shade for R9 and a thin slot tool for R10, as a TRL 3 revision.
+
+For the record only, TRL 4 would need: a lab test report (TST, `environment: lab`) covering the EC circuit in KCl standards, gravimetric moisture calibration in two soils, a soak and immersion test of the sealed head and probes, and a measured energy budget on a built stake; build log entries; and later a field range walk through tall crops. None of this is to start until Amish lifts the TRL cap.

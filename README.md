@@ -1,14 +1,14 @@
 # RootMesh
 
-![TRL 2](https://img.shields.io/badge/TRL-2%20of%209-0F766E) ![Hardware: CERN-OHL-S-2.0](https://img.shields.io/badge/hardware-CERN--OHL--S--2.0-111827) ![Software: MIT](https://img.shields.io/badge/software-MIT-111827)
+![TRL 3](https://img.shields.io/badge/TRL-3%20of%209-0F766E) ![Hardware: CERN-OHL-S-2.0](https://img.shields.io/badge/hardware-CERN--OHL--S--2.0-111827) ![Software: MIT](https://img.shields.io/badge/software-MIT-111827)
 
-**Area:** Agriculture · **TRL:** 2 of 9 (concept formulated) · **Prototype budget:** about $300 USD · **Difficulty:** 2 of 5
+**Area:** Agriculture · **TRL:** 3 of 9 (proof of concept on paper) · **Prototype budget:** about $300 USD · **Difficulty:** 2 of 5
 
 Solar-powered stakes that measure soil moisture, temperature and EC and report over LoRa to a single gateway and dashboard.
 
 ![RootMesh concept](media/hero.png)
 
-[Interactive 3D model](media/viewer.html) · [Concept blueprint (PDF)](media/concept-blueprint.pdf) · [Review note](docs/REVIEW.md)
+[Interactive 3D model](media/viewer.html) · [Concept blueprint (PDF)](media/concept-blueprint.pdf) · [General arrangement RMS-DWG-001 (PDF)](cad/drawings/RMS-DWG-001.pdf) · [Sizing calculations](docs/04-calcs/01-sizing.md) · [Review note](docs/REVIEW.md)
 
 ## Problem
 
@@ -16,7 +16,9 @@ Irrigation decisions rely on guesswork without cheap, field-hardy soil sensing. 
 
 ## Concept
 
-Solar-powered stakes that measure soil moisture, temperature and EC and report over LoRa to a single gateway and dashboard. Each stake reads water content at 150 mm and 300 mm, bulk EC and soil temperature every 20 min, runs on a 0.5 W panel and a small LiFePO4 cell, and costs about $52 in parts. A pilot set of three stakes and an indoor gateway is about $246 (indicative).
+Solar-powered stakes that measure soil moisture, temperature and EC and report over LoRa to a single gateway and dashboard. Each stake reads water content at 150 mm and 300 mm, bulk EC and soil temperature every 20 min, runs on a 0.5 W panel and a small LiFePO4 cell, carries its antenna at about 1 m on the flagged marker rod, and costs about $55.50 in parts. A pilot set of three stakes and an indoor gateway is $256.50 (indicative), within the $300 budget.
+
+The sizing note [RMS-CAL-001](docs/04-calcs/01-sizing.md) finds 8 of 14 requirements met on paper and 5 at risk: moisture accuracy, range through tall crops, head and cell temperature in bare hot soil, installation in firm dry soil and probe life. The parametric model is `cad/src/model.py` (STEP and STL in `cad/step` and `cad/stl`).
 
 Full design precis: [docs/02-concept.md](docs/02-concept.md)
 
@@ -25,10 +27,11 @@ Full design precis: [docs/02-concept.md](docs/02-concept.md)
 - Two capacitive moisture probes (sealed, TLC555 conversion) in a printed sensor fin
 - DS18B20 temperature probe
 - Stainless EC electrodes with AC excitation
-- LoRaWAN module (STM32WL class) with solar charger
+- LoRaWAN module (Seeed Wio-E5, STM32WLE5) with solar charger
+- Sleeve dipole antenna at about 1 m on the marker rod
 - 600 mAh LiFePO4 cell below grade
 - 0.5 W PV panel on a printed ASA head over a PVC stake tube
-- Indoor LoRaWAN gateway and open-source dashboard
+- Indoor LoRaWAN gateway on The Things Network and an open-source dashboard
 
 The working bill of materials is in [bom/bom.csv](bom/bom.csv).
 

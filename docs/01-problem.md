@@ -3,7 +3,7 @@ doc_id: RMS-PRB-001
 title: RootMesh problem statement
 project: RootMesh
 doc_type: Problem statement
-version: "0.2"
+version: "0.3"
 status: Draft
 date: '2026-09-25'
 author: Amish Chadha
@@ -17,11 +17,15 @@ revisions:
   date: '2026-09-25'
   author: Amish Chadha
   change: Populate to TRL 2 (problem, users, context, constraints, out of scope, prior work with sources)
+- version: "0.3"
+  date: '2026-09-25'
+  author: Amish Chadha
+  change: Record Amish's decisions (RMS-DDR-001) on the budget reading, power and network; update open questions
 ---
 
 # RootMesh problem statement
 
-Most small growers decide when and how much to irrigate by feel, by the look of the crop or by the calendar, because field-ready soil sensors that report wirelessly cost $150 to $600 or more per measurement point. A sensor stake that measures root-zone moisture, temperature and salinity for about $50 in parts, runs on a small solar panel and reports over LoRaWAN to one gateway at the farmhouse would put measured soil data within reach of farms that cannot justify commercial systems.
+Most small growers decide when and how much to irrigate by feel, by the look of the crop or by the calendar, because field-ready soil sensors that report wirelessly cost $150 to $600 or more per measurement point. A sensor stake that measures root-zone moisture, temperature and salinity for about $56 in parts, runs on a small solar panel and reports over LoRaWAN to one gateway at the farmhouse would put measured soil data within reach of farms that cannot justify commercial systems.
 
 ## The problem
 
@@ -56,11 +60,11 @@ RootMesh aims to close all three: a stake built from low-cost parts but designed
 
 ## Constraints
 
-- Garage-buildable prototype. The project budget is about $300 USD, taken here as a pilot set of three stakes and one gateway (see `bom/bom-notes.md`).
+- Garage-buildable prototype. The project budget is $300 USD for a pilot set of three stakes and one gateway (decided by Amish, 2026-09-25; RMS-DDR-001, D4).
 - Parts available from general electronics retailers; enclosure parts printable or from a hardware store.
-- No mains power in the field; solar harvest with a small rechargeable cell.
+- No mains power in the field; solar harvest with a small rechargeable LiFePO4 cell (RMS-DDR-001, D1 and D5).
 - Operate within license-free radio rules for the region (for example ETSI EN 300 220 duty cycles in Europe, FCC Part 15 in the United States) and within The Things Network fair use policy if the free community network server is used ([The Things Network, "Duty Cycle"](https://www.thethingsnetwork.org/docs/lorawan/duty-cycle/)).
-- The grower owns the data. The system must work without a paid cloud subscription.
+- The grower owns the data. The system must work without a paid cloud subscription. The pilot uses The Things Network's free community server (RMS-DDR-001, D3).
 - Removable by hand before tillage or harvest, and reinstallable at the same depth.
 
 ## Out of scope
@@ -82,8 +86,8 @@ RootMesh aims to close all three: a stake built from low-cost parts but designed
 
 ## Open questions
 
-- Which first users and region: a market garden, an orchard, a university research farm or an extension program? Proposed, awaiting Amish.
-- Is one gateway at the farmhouse enough for the fields of the first users, or is an outdoor gateway on a mast needed?
+- Which first users and region: a market garden, an orchard, a university research farm or an extension program? This also sets EU868 or US915. Proposed, awaiting Amish (co-design partners to be picked per area later).
+- Is one indoor gateway enough for the fields of the first users? With the antenna on the marker rod the link closes at 1 km on paper (RMS-CAL-001), but tall crops such as maize or orchard rows may need an outdoor gateway.
 - Do growers want a simple "irrigate now" signal, a depletion chart, or both?
 - How often must stakes come out for tillage or harvest, and how quickly must they go back in?
 - Is EC (salinity) valued by the first users, or does it add cost for little use in their fields?
