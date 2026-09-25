@@ -1,7 +1,15 @@
 item,qty,spec,supplier,unit_cost_usd,make_buy,notes
-Capacitive moisture probe,,,,,,
-DS18B20 temperature sensor,,,,,,
-EC electrodes,,,,,,
-LoRa module,,,,,,
-Printed stake housing,,,,,,
-Small PV panel,,,,,,
+1 Solar panel,3,"5 V, 0.5 W monocrystalline, about 70 x 50 mm, epoxy or PET laminate",Online electronics retailer,3.00,buy,Indicative price; 1 per stake
+2 Head enclosure,3,"3D-printed ASA cup, 72 mm diameter, 30 degree sloped top, socket over the 42 mm tube",Self,3.00,make,Material cost only; ASA for UV and heat; 1 per stake
+3 Controller board,3,"LoRaWAN module (STM32WLE5 class, e.g. Seeed Wio-E5) on a small carrier PCB with LiFePO4 solar charger (CN3058E class with NTC cut-off), sensor power switch and EC drive",Seeed Studio or distributor; PCB service,15.00,buy,Indicative: module about $7 plus PCB and parts about $8; module choice proposed awaiting Amish; 1 per stake
+4 Antenna,3,"Quarter-wave whip for the regional band (EU868 or US915), with u.FL to bulkhead pigtail",Online electronics retailer,4.00,buy,Indicative price; 1 per stake
+5 LiFePO4 cell,3,"14500 size, 3.2 V, 600 mAh, with holder and PTC fuse",Battery distributor,4.00,buy,Indicative price; about 1.9 Wh per cell; 1 per stake
+6 Stake tube,3,"PVC pressure pipe, 42 mm OD (40 mm or 1-1/4 in nominal), 170 mm long",Hardware store,1.50,buy,Indicative price; 1 per stake
+7 Sensor fin,3,"3D-printed PETG or ASA carrier, 36 x 12 x 310 mm, two sensing windows, pointed tip",Self,2.50,make,Material cost only; 1 per stake
+8 Capacitive moisture probe,6,"Capacitive soil moisture sensor v1.2 class, NE555 swapped for TLC555, edges sealed in epoxy",Online electronics retailer,3.00,buy,Indicative price including TLC555 and epoxy; 2 per stake (150 and 300 mm)
+9 EC electrode,6,"316 stainless steel rod, 4 mm diameter, 80 mm long, 24 mm spacing",Metal supplier,1.50,buy,Indicative price; 2 per stake
+10 Temperature probe,3,"DS18B20 in 6 mm stainless sheath, 1 m cable",Online electronics retailer,2.50,buy,Indicative price; 1 per stake
+11 Marker rod and flag,3,"Fiberglass rod, 8 mm diameter, 1.2 m, high-visibility flag",Farm or garden supplier,3.00,buy,Indicative price; 1 per stake
+12 Seals and consumables,3,"O-ring, IP68 cable gland, desiccant sachet, potting epoxy, wire, fasteners",Hardware store,4.50,buy,Indicative price; 1 per stake
+13 LoRaWAN gateway,1,"Indoor 8-channel LoRaWAN gateway with Wi-Fi backhaul and USB supply (The Things Indoor Gateway class)",Distributor,90.00,buy,Indicative price; one per farm; not shown in the exploded view; choice proposed awaiting Amish
+14 Dashboard software,1,"Open-source dashboard (for example Node-RED or Grafana) on an existing computer, fed from the network server",Open source,0.00,make,No hardware cost; not shown in the exploded view

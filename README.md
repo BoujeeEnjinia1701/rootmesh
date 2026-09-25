@@ -6,24 +6,29 @@
 
 Solar-powered stakes that measure soil moisture, temperature and EC and report over LoRa to a single gateway and dashboard.
 
+![RootMesh concept](media/hero.png)
+
+[Interactive 3D model](media/viewer.html) · [Concept blueprint (PDF)](media/concept-blueprint.pdf) · [Review note](docs/REVIEW.md)
+
 ## Problem
 
-Irrigation decisions rely on guesswork without cheap, field-hardy soil sensing.
+Irrigation decisions rely on guesswork without cheap, field-hardy soil sensing. Commercial wireless soil nodes cost about $150 to $600 or more per measurement point, and the cheap hobby probes corrode and drift when buried.
 
 ## Concept
 
-Solar-powered stakes that measure soil moisture, temperature and EC and report over LoRa to a single gateway and dashboard.
+Solar-powered stakes that measure soil moisture, temperature and EC and report over LoRa to a single gateway and dashboard. Each stake reads water content at 150 mm and 300 mm, bulk EC and soil temperature every 20 min, runs on a 0.5 W panel and a small LiFePO4 cell, and costs about $52 in parts. A pilot set of three stakes and an indoor gateway is about $246 (indicative).
 
 Full design precis: [docs/02-concept.md](docs/02-concept.md)
 
 ## Key components
 
-- Capacitive moisture probe
-- DS18B20 temperature sensor
-- EC electrodes
-- LoRa module
-- Printed stake housing
-- Small PV panel
+- Two capacitive moisture probes (sealed, TLC555 conversion) in a printed sensor fin
+- DS18B20 temperature probe
+- Stainless EC electrodes with AC excitation
+- LoRaWAN module (STM32WL class) with solar charger
+- 600 mAh LiFePO4 cell below grade
+- 0.5 W PV panel on a printed ASA head over a PVC stake tube
+- Indoor LoRaWAN gateway and open-source dashboard
 
 The working bill of materials is in [bom/bom.csv](bom/bom.csv).
 
