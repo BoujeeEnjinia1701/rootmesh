@@ -3,7 +3,7 @@ doc_id: RMS-PRC-001
 title: RootMesh design precis
 project: RootMesh
 doc_type: Design precis
-version: "0.3"
+version: "0.4"
 status: Draft
 date: '2026-09-25'
 author: Amish Chadha
@@ -21,11 +21,15 @@ revisions:
   date: '2026-09-25'
   author: Amish Chadha
   change: Apply Amish's decisions (RMS-DDR-001); antenna on the marker rod; numbers checked against RMS-CAL-001; parametric model and drawing RMS-DWG-001
+- version: "0.4"
+  date: '2026-09-25'
+  author: Amish Chadha
+  change: Recommendations accepted by Amish (DDR-002)
 ---
 
 # RootMesh design precis
 
-RootMesh is a hand-installed soil sensor stake that measures volumetric water content at 150 mm and 300 mm, bulk EC and soil temperature, and reports every 20 min over LoRaWAN to one gateway at the farmhouse, from which an open dashboard shows root-zone depletion against a threshold the grower sets. The sizing note RMS-CAL-001 finds that a stake needs about 2.6 mAh a day including cell self-discharge, so a 0.5 W panel harvests about 58 times that need in the worst month and a 600 mAh LiFePO4 cell alone lasts about 186 days. With the antenna raised to about 1 m on the marker rod, the radio link has 13.5 dB of margin at 1 km. A stake costs $55.50 in parts and a pilot set of three stakes and a gateway $256.50, within the $300 budget. Eight of fourteen requirements are met on paper; five are at risk: moisture accuracy (R1), range through tall crops (R5), head and cell temperature in bare, hot soil (R9), pushing the fin into firm dry soil (R10) and probe life (R14).
+RootMesh is a hand-installed soil sensor stake that measures volumetric water content at 150 mm and 300 mm, bulk EC and soil temperature, and reports every 20 min over LoRaWAN to one gateway at the farmhouse, from which an open dashboard shows root-zone depletion against a threshold the grower sets. The sizing note RMS-CAL-001 finds that a stake needs about 2.6 mAh a day including cell self-discharge, so a 0.5 W panel harvests about 58 times that need in the worst month and a 600 mAh LiFePO4 cell alone lasts about 186 days. With the antenna raised to about 1 m on the marker rod, the radio link has 13.5 dB of margin at 1 km. A stake costs $55.50 in parts, and a pilot set of three stakes, a gateway and a steel slot tool for installation costs $266.50, within the $300 budget. Eight of fourteen requirements are met on paper; five are at risk: moisture accuracy (R1), range through tall crops (R5), head and cell temperature in bare, hot soil (R9), pushing the fin into firm dry soil (R10) and probe life (R14). The slot tool brings installation in moist soil within one person's strength (about 376 N); firm dry soil still needs about 1.2 kN.
 
 ![Hero render](../media/hero.png)
 
@@ -63,6 +67,7 @@ Numbers match the exploded view (Figure 3) and `bom/bom.csv`.
 | 12 | Seals and consumables | O-ring, IP68 glands, ePTFE vent membrane, desiccant, potting | The vent stops daily thermal pumping of about 15 kPa (RMS-CAL-001) |
 | 13 | LoRaWAN gateway | Indoor 8-channel gateway with Wi-Fi (The Things Indoor Gateway class, about $79 to $90; [Seeed Studio](https://www.seeedstudio.com/The-Things-Indoor-Gateway-EU-p-4709.html)) | Not in the exploded view; The Things Network for the pilot decided (RMS-DDR-001, D3) |
 | 14 | Dashboard | Open-source (for example Node-RED or Grafana) on an existing computer | Not in the exploded view |
+| 15 | Slot tool | 32 x 8 mm mild steel flat bar, 650 mm, pointed, with a bolted T-handle and a printed 80 mm depth-stop collar; one per set | Pre-cuts the fin and EC rod path; driven with a mallet, then withdrawn (RMS-DDR-002). Not in the exploded view |
 
 ![Exploded view](../media/exploded.png)
 
@@ -72,7 +77,7 @@ Numbers match the exploded view (Figure 3) and `bom/bom.csv`.
 
 *Figure 4. Section through the stake: controller board in the head, cell in the tube below grade, moisture probes in the fin windows, temperature probe on the fin edge and EC electrodes below the tip. The marker rod and antenna are omitted for clarity.*
 
-The general arrangement drawing [RMS-DWG-001](../cad/drawings/RMS-DWG-001.pdf) (Rev P1) gives the main dimensions and interfaces from the parametric model `cad/src/model.py`.
+The general arrangement drawing [RMS-DWG-001](../cad/drawings/RMS-DWG-001.pdf) (Rev P2) gives the main dimensions and interfaces from the parametric model `cad/src/model.py`.
 
 ## First-order numbers
 
@@ -135,7 +140,8 @@ Raising the antenna to the top of the marker rod (RMS-DDR-001, D2) closes the li
 | One stake (items 1 to 12) | $55.50 | R12 ($60) met |
 | Three stakes | $166.50 | |
 | Gateway (item 13) | $90.00 | |
-| **Pilot set** | **$256.50** | R12 ($300) met, $43.50 headroom |
+| Slot tool (item 15) | $10.00 | |
+| **Pilot set** | **$266.50** | R12 ($300) met, $33.50 headroom |
 | Reference: Dragino SE01 node | about $151 to $170 per point ([Choovio](https://www.choovio.com/product/se01-lb-lorawan-soil-moisture-ec-sensor/)) | |
 
 ## Key design choices
@@ -150,8 +156,10 @@ Amish decided the choices below on 2026-09-25 by approving the TRL 2 recommendat
 - **Indoor gateway, antenna on the marker rod** (D2): a sleeve dipole at about 1 m on the rod, fed by a 1.2 m lead, gives 13.5 dB margin at 1 km for $7 a stake. It adds a cable and a snag point; the rod is flexible and flagged.
 - **Default interval 20 min** (D9): fits the fair use limit at SF10; faster with adaptive data rate near the gateway.
 - **Budget read as a pilot set** (D4): the $300 covers three stakes and one gateway.
+- **Steel slot tool for installation** (RMS-DDR-002): a pointed 32 x 8 mm steel blade, driven with a mallet down the auger hole and withdrawn, pre-cuts the fin path so the fin only widens the slot. Push force falls from 517 N to 376 N in moist loam and from 1,778 N to 1,216 N in firm dry loam (RMS-CAL-001 v0.2). Steel rather than a printed blade, because a printed blade would not survive firm soil.
+- **Cell position kept at 62 mm** (RMS-DDR-002): a deeper cell was checked; the deepest center that fits above the fin spigot (about 65 mm) lowers the peak cell temperature in bare, hot soil only from 46.8 to 46.5 °C, and meeting 40 °C would need about 163 mm, where the upper probe sits.
 
-Still open: first users and region (O1), which also sets EU868 or US915. Proposed, awaiting Amish.
+Still open: first users and region (O1), which also sets EU868 or US915; and the response to the cell temperature in bare, hot soil (RMS-DDR-002, P1). Both proposed, awaiting Amish.
 
 ## Safety
 
@@ -161,7 +169,8 @@ Still open: first users and region (O1), which also sets EU868 or US915. Propose
 - **Sealed enclosure pressure.** A sealed head in sun warms from about 20 to 64 °C each day, a swing of about 15 kPa that would pump moisture past the seals. The head carries an ePTFE vent membrane and a desiccant.
 - **Cell temperature.** In bare, hot soil the cell can reach about 47 °C (RMS-CAL-001). The charger's 45 °C cut-off stops charging, but check that the cell holder and fuse are rated for it, and never leave a stake in a closed vehicle.
 - **Machinery and trips.** A stake struck by a tractor, mower or tiller can be thrown or can damage the implement; a low stake is a trip hazard. The flagged marker rod is part of the design, and stakes should be pulled before tillage. The antenna lead on the rod is a snag point; tape it to the rod.
-- **Installation effort.** Pushing the fin into firm dry soil can take about 1.8 kN (RMS-CAL-001). Do not hammer on the head or stand on it; install after irrigation or cut a slot first.
+- **Installation effort.** Pushing the fin into firm dry soil can take about 1.8 kN, or about 1.2 kN after the slot tool (RMS-CAL-001). Do not hammer on the head or stand on it; install after irrigation or pre-wet the hole, and cut the slot first.
+- **Slot tool.** A pointed steel blade struck with a mallet: wear eye protection and gloves, keep feet clear of the point, keep the depth-stop collar fitted, and store the tool with a tip cover.
 - **Sharp parts.** The fin tip and stainless electrodes are pointed; handle and store with tip covers, and keep away from children and livestock.
 - **Chemicals and electrical.** Epoxy potting and conformal coating need gloves and ventilation. The stake runs at 3.2 V and carries no shock hazard; the gateway plugs into mains indoors through its own certified USB supply.
 - **Data is not advice.** Readings inform a grower's decision. A failed or badly calibrated stake can read wet when the soil is dry, so growers should keep checking the crop, especially while the system is new.
@@ -171,8 +180,8 @@ Still open: first users and region (O1), which also sets EU868 or US915. Propose
 - First users and region for co-design, and so EU868 or US915 (O1). Proposed, awaiting Amish.
 - Can the moisture calibration reach ±3 % VWC in two soils (R1)? Needs a gravimetric calibration at TRL 4.
 - Does the link hold through tall crops at 1 km (R5)? Needs a range walk at TRL 4.
-- Should the cell sit deeper, or the soil around the head be shaded, to keep the cell under 40 °C in bare hot soil (R9)?
-- Does a thin slot tool bring installation in firm soil within one person's strength (R10)?
+- A deeper cell cannot keep the cell under 40 °C in bare, hot soil (R9). Shade the soil around the head, or restate the cell limit to the chosen cell's rated discharge range? Proposed, awaiting Amish (RMS-DDR-002, P1).
+- The slot tool brings moist soil within one person's strength on paper, but not firm dry soil (R10). A timed installation trial is TRL 4 work, on hold.
 - Which edge seal lets the hobby probes last 12 months buried (R14)?
 
 Concept media: [blueprint sheet](../media/concept-blueprint.pdf), [interactive 3D model](../media/viewer.html).

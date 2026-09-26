@@ -38,7 +38,7 @@ render_all(
                  "LoRaWAN every 20 min at SF10: 0.37 s, 26.7 s/day",
                  "About 2.6 mAh/day; about 186 days dark (RMS-CAL-001)",
                  "Antenna at 1 m: 13.5 dB margin at 1 km (estimate)",
-                 "Pilot set: 3 stakes and gateway $256.50 (indicative)"],
+                 "Pilot set: 3 stakes, gateway, slot tool $266.50 (indicative)"],
     scale_figure=False, context=context, cut_exclude=(NAMES["marker"], NAMES["antenna"]),
     flow={"title": "data flow, soil to irrigation decision (estimates)", "unit": "",
           "stages": [("Root-zone soil", "2 depths, EC, temp"), ("Stake reading", "every 20 min"),

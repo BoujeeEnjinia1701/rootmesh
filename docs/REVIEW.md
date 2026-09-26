@@ -137,3 +137,50 @@ Decided by Amish, 2026-09-25: go with recommendation.
 TRL 4 is on hold by Amish's instruction; this repo stops at TRL 3. Useful paper work that stays within TRL 3: decide O1 (first users and region), then consider design responses to the at-risk items, such as a deeper cell position or soil shade for R9 and a thin slot tool for R10, as a TRL 3 revision.
 
 For the record only, TRL 4 would need: a lab test report (TST, `environment: lab`) covering the EC circuit in KCl standards, gravimetric moisture calibration in two soils, a soak and immersion test of the sealed head and probes, and a measured energy budget on a built stake; build log entries; and later a field range walk through tall crops. None of this is to start until Amish lifts the TRL cap.
+
+## Session 2026-09-25: recommendations accepted
+
+Amish wrote on 2026-09-25, in chat: "i accept all your recommendations, go with them across all repos." This session applied that instruction inside this repo only, at TRL 3, and recorded it in `docs/decisions/0002-recommendations-accepted.md` (RMS-DDR-002 v0.1).
+
+### Decisions applied and what changed
+
+The TRL 2 items D1 to D9 were already decided in RMS-DDR-001 and are unchanged. Newly decided (Decided by Amish, 2026-09-25: go with recommendation):
+
+| # | Item | Change | Before | After |
+| --- | --- | --- | --- | --- |
+| A1 | Slot tool for firm soil (TRL 2 suggestion) | Steel slot tool, 32 x 8 mm blade pointed at 485 mm, T-handle, printed depth stop; `build_slot_tool()` in `cad/src/model.py`, `cad/step/slot-tool.step` and `cad/stl/slot-tool.stl`; BOM line 15 | Push force 517 N moist, 1,778 N firm dry | 376 N moist, 1,216 N firm dry |
+| A2 | Deeper cell for R9 (TRL 3 recommended next step) | Checked by calculation (RMS-CAL-001 v0.2, [F4]); no geometry change | Cell peak 46.8 °C at 62 mm | Deepest fit about 65 mm gives 46.5 °C; 40 °C needs about 163 mm, where the upper probe sits; cell stays at 62 mm |
+| A3 | Pilot set includes the slot tool | R12 restated; `budget_usd` unchanged at $300 | Pilot set $256.50, headroom $43.50 | $266.50, headroom $33.50 |
+| A4 | Field calibration note (TRL 2 suggestion) | Decided but on hold: the field calibration needs gravimetric samples and KCl standards (TRL 4) | | |
+
+Documents changed: RMS-PRC-001 v0.3 to v0.4, RMS-REQ-001 v0.3 to v0.4, RMS-CAL-001 v0.1 to v0.2 (script `docs/04-calcs/sizing.py` updated and re-run), RMS-DWG-001 Rev P1 to P2 (slot tool note), `bom/bom.csv` and `bom/bom-notes.md`, `README.md`, `project.yaml` (evidence list only). Media and all PDFs regenerated; STEP and STL re-exported. RMS-PRB-001 is unchanged (it did not attribute the idea to a brainstorm or review).
+
+### Requirement status (RMS-CAL-001 v0.2)
+
+Counts unchanged: 0 not met, 5 at risk, 1 not verifiable at TRL 3, 8 met.
+
+- At risk: R1 (moisture accuracy), R5 (range through tall crops), R9 (head about 64 °C; cell about 47 °C in bare, hot soil), R10 (now 376 N in moist loam, within one person's 500 N, but 1,216 N in firm dry loam), R14 (probe life).
+- Not verifiable at TRL 3: R8 (sealing).
+- Met: R2, R3, R4, R6, R7, R11, R12 ($55.50 per stake, $266.50 pilot set), R13.
+
+### Still awaiting Amish
+
+- O1: first users and region for co-design (sets EU868 or US915). No recommendation was made.
+- P1 (new, from the A2 check): respond to the cell temperature in bare, hot soil by (A) a printed shade skirt around the head or (B) restating the R9 cell limit to the chosen cell's rated discharge and storage range, with charging still blocked above 45 °C. Recommendation: B, after confirming the cell's rated range.
+
+### Cross-repo actions
+
+None. No RootMesh recommendation needs another repo to change.
+
+### Other changes
+
+- `README.md`: added "Concept rationale", "Burning platform", "Where it could be used" and "What sparked the idea" before "Problem", with cited figures (World Bank, FAO, USGS, ABS, European Parliamentary Research Service, IFPRI, Datta and Taghvaeian 2023). The inspiration point is the USDA NRCS guide *Estimating Soil Moisture by Feel and Appearance* (April 1998).
+- All generated files regenerated so they carry designmolecule.com.
+
+### Safety
+
+The slot tool adds a pointed steel blade struck with a mallet: eye protection, gloves, feet clear of the point, collar fitted, tip cover in storage (RMS-PRC-001 v0.4, Safety). The earlier concerns (cell temperature, installation force, machinery strikes, sealed-head pressure) stand.
+
+### TRL 4
+
+TRL 4 remains on hold by Amish's instruction. No hardware, test, trial, PCB or firmware work was started. The field calibration (A4), a timed installation trial with the slot tool and any build of it wait for Amish to lift the cap.

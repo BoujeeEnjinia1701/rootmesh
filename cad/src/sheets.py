@@ -1,4 +1,4 @@
-"""RootMesh general arrangement sheet RMS-DWG-001, Rev P1 (TRL 3).
+"""RootMesh general arrangement sheet RMS-DWG-001, Rev P2 (TRL 3).
 
 Run from the repo root:  python cad/src/sheets.py
 Writes cad/drawings/RMS-DWG-001.svg, .pdf and .png from the parametric model in
@@ -101,11 +101,12 @@ def main():
     elev = safe_project_views(full, work / "full", names=("front", "iso"))
     bb = stake.bounding_box()
 
-    s = Sheet(project="RootMesh", title="General arrangement, sensor stake", dwg_no="RMS-DWG-001", rev="P1",
+    s = Sheet(project="RootMesh", title="General arrangement, sensor stake", dwg_no="RMS-DWG-001", rev="P2",
               author="Amish Chadha", date=DATE, scale=0.2, theme="technical",
               material="ASA head, PVC tube, PETG or ASA fin, 316 stainless electrodes; bought-in parts per bom/bom.csv. "
                        "PRELIMINARY, NOT FOR FABRICATION",
-              revisions=[("P1", "Preliminary GA for TRL 3 (from cad/src/model.py)", DATE, "AC")])
+              revisions=[("P1", "Preliminary GA for TRL 3 (from cad/src/model.py)", DATE, "AC"),
+                         ("P2", "Slot tool note added (RMS-DDR-002)", DATE, "AC")])
     s.add_ortho(views)
     k = s.scale
     c = ortho_cells(k, views)
@@ -176,6 +177,7 @@ def main():
         f"Cell 14500 LiFePO4 centered {-P['cell_z']:.0f} below grade",
         f"Antenna sleeve dipole centered {P['ant_center_z']:.0f} on the marker rod (RMS-DDR-001 D2)",
         f"Fin pushed {D['push_depth']:.0f} into undisturbed soil below a 50 dia auger hole",
+        f"Slot tool (BOM 15, separate): {P['slot_w']:.0f} x {P['slot_t']:.0f} steel blade, point {-D['ec_bot']:.0f} deep, {P['stop_d']:.0f} dia stop collar",
         "Third-angle; front view from -Y; X toward the equator",
     ], x=276, y=153, width=146)
     out = s.save(ROOT / "cad" / "drawings" / "RMS-DWG-001")

@@ -6,6 +6,7 @@ Exports STEP and STL into cad/step and cad/stl:
     head-enclosure.step / .stl            printed ASA head (panel seat, socket, gland and vent bosses)
     sensor-fin.step / .stl                printed fin with spigot, probe windows and tip
     stake-tube.step / .stl                PVC tube, 42 mm OD
+    slot-tool.step / .stl                 installation slot tool (BOM 15), not part of the installed stake
 
 Axes: one stake at the origin, soil surface (grade) at z = 0, Z up. X points toward the
 equator (the panel tilts that way), the marker rod stands on -X. Main dimensions and
@@ -45,6 +46,10 @@ PARAMS = {
     "flag": (140.0, 2.0, 90.0), "flag_z": 840.0,
     "ant_len": 172.0, "ant_d": 10.0, "ant_center_z": 1000.0,   # half-wave sleeve dipole, 868 MHz
     "coax_d": 3.0, "coax_z": 120.0,
+    # slot tool (BOM 15, one per pilot set; RMS-DDR-002): steel flat bar blade driven with a mallet
+    # through the auger hole to pre-cut the fin and EC rod path, then withdrawn
+    "slot_w": 32.0, "slot_t": 8.0, "slot_point": 40.0, "slot_top": 150.0,
+    "handle_d": 20.0, "handle_l": 250.0, "stop_d": 80.0, "stop_h": 15.0,
 }
 
 
@@ -70,6 +75,8 @@ def derived(p=PARAMS):
         "fin_perimeter_mm": 2 * (p["fin_w"] + p["fin_t"]),
         "push_depth": p["tube_bot"] - tip_z,                # depth pushed into undisturbed soil below the auger hole
         "overall_h": rod_top - ec_bot,
+        "slot_area_mm2": p["slot_w"] * p["slot_t"],
+        "slot_blade_l": p["slot_top"] - ec_bot,              # grade stop to point, plus the part above grade
     }
 
 
@@ -167,6 +174,23 @@ def build_parts(p=PARAMS):
     return parts
 
 
+def build_slot_tool(p=PARAMS):
+    """Slot tool (BOM 15): 32 x 8 mm steel blade with a point at the EC tip depth, a T-handle
+    and a printed depth-stop collar that rests on grade. Shown in its driven position."""
+    from build123d import Box, Cylinder, Plane, Polygon, Pos, Rot, extrude
+    d = derived(p)
+    w, t, pt = p["slot_w"], p["slot_t"], p["slot_point"]
+    z_tip = d["ec_bot"]
+    body_l = p["slot_top"] - (z_tip + pt)
+    blade = Pos(0, 0, z_tip + pt + body_l / 2) * Box(w, t, body_l)
+    # point: a triangular prism, full width at the top of the point, sharp at the EC tip depth
+    tri = Plane.XZ * Polygon((-w / 2, z_tip + pt), (w / 2, z_tip + pt), (0, z_tip), align=None)
+    tip = extrude(tri, amount=t / 2, both=True)
+    handle = Pos(0, 0, p["slot_top"] - p["handle_d"]) * Rot(90, 0, 0) * Rot(0, 90, 0) * Cylinder(p["handle_d"] / 2, p["handle_l"])
+    stop = Pos(0, 0, p["stop_h"] / 2) * (Cylinder(p["stop_d"] / 2, p["stop_h"]) - Box(w + 0.6, t + 0.6, p["stop_h"] + 2))
+    return blade + tip + handle + stop
+
+
 NAMES = {"panel": "Solar panel, 0.5 W", "head": "Head enclosure, printed ASA",
          "controller": "Controller board, Wio-E5 and charger", "antenna": "Antenna on marker rod, with coax",
          "cell": "LiFePO4 cell, 600 mAh", "tube": "Stake tube, 40 mm PVC", "fin": "Sensor fin, printed",
@@ -191,7 +215,7 @@ if __name__ == "__main__":
     parts = build_parts()
     asm = assembly()
     exports = {"rootmesh-stake-assembly": asm, "head-enclosure": parts["head"][0],
-               "sensor-fin": parts["fin"][0], "stake-tube": parts["tube"][0]}
+               "sensor-fin": parts["fin"][0], "stake-tube": parts["tube"][0], "slot-tool": build_slot_tool()}
     for name, shape in exports.items():
         export_step(shape, str(out / "step" / f"{name}.step"))
         export_stl(shape, str(out / "stl" / f"{name}.stl"))
@@ -200,6 +224,9 @@ if __name__ == "__main__":
     print(f"assembly bounding box {bb.size.X:.0f} x {bb.size.Y:.0f} x {bb.size.Z:.0f} mm")
     print(f"head top {d['head_top']:.1f} mm above grade; antenna {d['ant_bot']:.0f} to {d['ant_top']:.0f} mm; "
           f"rod top {d['rod_top']:.0f} mm; EC tips {d['ec_bot']:.0f} mm")
+    st = exports["slot-tool"].bounding_box()
+    print(f"slot tool {st.size.X:.0f} x {st.size.Y:.0f} x {st.size.Z:.0f} mm; blade {PARAMS['slot_w']:.0f} x {PARAMS['slot_t']:.0f}, "
+          f"point at {d['ec_bot']:.0f} mm")
     for k, (s, _, _) in parts.items():
         print(f"  {k:<11} volume {s.volume / 1000:8.1f} cm3")
     print("exported:", ", ".join(exports))

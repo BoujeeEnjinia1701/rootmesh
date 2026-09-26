@@ -1,8 +1,8 @@
-"""RootMesh sizing calculations (RMS-CAL-001), TRL 3.
+"""RootMesh sizing calculations (RMS-CAL-001 v0.2), TRL 3.
 
 Run from the repo root:  python docs/04-calcs/sizing.py
 Prints every number that RMS-CAL-001 (docs/04-calcs/01-sizing.md) quotes, tagged [A1], [B3] and
-so on, and the results table against RMS-REQ-001 v0.3. Geometry comes from cad/src/model.py
+so on, and the results table against RMS-REQ-001 v0.4. Geometry comes from cad/src/model.py
 (PARAMS and derived), cost from bom/bom.csv and the budget from project.yaml.
 All values are first-principles estimates for a paper proof of concept.
 """
@@ -214,6 +214,16 @@ for label, mean, amp in (("bare soil, hot summer", 35.0, 20.0), ("under a crop c
         f"cell at {zc * 1000:.0f} mm, {label}: surface {mean - amp:.0f} to {mean + amp:.0f} C, damping depth {Dd * 1000:.0f} mm, "
         f"cell {mean - A:.1f} to {mean + A:.1f} C")
 A_hot = 20.0 * math.exp(-zc / Dd)
+# F4 (RMS-DDR-002): how deep would the cell have to sit to stay at or below 40 C in bare hot soil?
+z_need = Dd * math.log(20.0 / (40.0 - 35.0))
+spigot_top = -(P["fin_top"] + P["spigot_l"] - 10)       # depth of the fin spigot top inside the tube
+win_top = P["depths"][0] - P["probe_l"] / 2
+z_max = spigot_top - P["cell_l"] / 2                      # deepest cell center above the spigot
+A_max = 20.0 * math.exp(-z_max / 1000 / Dd)
+out("F4", f"cell center for 40 C or less in bare hot soil: {z_need * 1000:.0f} mm deep; the fin spigot reaches up to "
+          f"{spigot_top:.0f} mm and the upper probe window starts at {win_top:.0f} mm, so the deepest cell center that fits "
+          f"is about {z_max:.0f} mm ({35 + A_max:.1f} C); a deeper cell alone cannot meet R9 without moving the "
+          f"150 mm probe that R1 fixes")
 req("R9", f"head about {T_head:.0f} C at 45 C air (parts rated 85 C); cell up to {35 + A_hot:.0f} C in bare hot soil",
     "-10 to 60 C at the head; -5 to 40 C at the cell", "At risk")
 v_l = D["head_air_l"]
@@ -228,16 +238,26 @@ req("R8", f"thermal pumping {dp:.0f} kPa daily without a vent; vent added", "Hea
 # ---------------------------------------------------------------- G. Installation (R10, R11)
 print("\nG. Installation and geometry")
 A_sec = (D["fin_section_mm2"] + 2 * math.pi * (P["ec_d"] / 2) ** 2) / 1e6
+# with the slot tool (RMS-DDR-002) the fin only widens a 32 x 8 mm pre-cut slot; the EC rods (4 mm) pass
+# inside it. Shaft friction is kept unchanged (conservative: the fin faces still displace 2 mm of soil each side)
+A_slot = (D["fin_section_mm2"] - D["slot_area_mm2"]) / 1e6
 per = D["fin_perimeter_mm"] / 1000
 fin_in = (P["tube_bot"] - P["fin_bot"]) / 1000
-forces = {}
+forces, forces_slot = {}, {}
 for label, qc, fs in (("moist loam (after irrigation)", 0.5e6, 10e3), ("firm dry loam", 2.0e6, 30e3)):
     f = qc * A_sec + fs * per * fin_in
-    forces[label] = f
+    fsl = qc * A_slot + fs * per * fin_in
+    forces[label], forces_slot[label] = f, fsl
     out(f"G1-{label.split()[0]}", f"push force, {label}: tip {qc * A_sec:.0f} N + shaft {fs * per * fin_in:.0f} N "
                                   f"= {f:.0f} N ({f / 9.81:.0f} kgf); fin {fin_in * 1000:.0f} mm into undisturbed soil")
+    out(f"G4-{label.split()[0]}", f"with the slot tool, {label}: tip {qc * A_slot:.0f} N on the residual "
+                                  f"{A_slot * 1e6:.0f} mm2 + shaft {fs * per * fin_in:.0f} N = {fsl:.0f} N ({fsl / 9.81:.0f} kgf)")
 out("G2", "one person leaning on the head gives about 500 N (51 kgf)")
-req("R10", f"{forces['moist loam (after irrigation)']:.0f} N moist, {forces['firm dry loam']:.0f} N firm dry",
+out("G5", f"slot tool: {P['slot_w']:.0f} x {P['slot_t']:.0f} mm steel blade, point at {-D['ec_bot']:.0f} mm, driven with a "
+          f"mallet ({D['slot_blade_l']:.0f} mm from point to handle), so hammer blows go into the tool, not the stake head")
+req("R10", f"with slot tool {forces_slot['moist loam (after irrigation)']:.0f} N moist, "
+           f"{forces_slot['firm dry loam']:.0f} N firm dry (without: {forces['moist loam (after irrigation)']:.0f} N, "
+           f"{forces['firm dry loam']:.0f} N)",
     "One person, 50 mm auger, 15 min; depths +/-25 mm", "At risk")
 out("G3", f"head top {D['head_top']:.0f} mm above grade; antenna {D['ant_bot']:.0f} to {D['ant_top']:.0f} mm on the "
           f"flexible rod; rod top {D['rod_top']:.0f} mm; flag center {P['flag_z']:.0f} mm")
@@ -253,7 +273,8 @@ budget_usd = None
 for line in (ROOT / "project.yaml").read_text().splitlines():
     if line.startswith("budget_usd:"):
         budget_usd = float(line.split(":")[1].split("#")[0])
-out("H1", f"one stake ${stake:.2f}; three stakes ${3 * stake:.2f}; gateway $90.00; pilot set ${total:.2f} "
+tool = sum(float(r["unit_cost_usd"]) * float(r["qty"]) for r in rows if int(r["item"].split()[0]) == 15)
+out("H1", f"one stake ${stake:.2f}; three stakes ${3 * stake:.2f}; gateway $90.00; slot tool ${tool:.2f}; pilot set ${total:.2f} "
           f"against budget ${budget_usd:.0f} (headroom ${budget_usd - total:.2f})")
 req("R12", f"${stake:.2f} per stake; ${total:.2f} pilot set", "$60 per stake; $300 pilot set", "Met")
 req("R13", "TTN community server (free), webhook to a local Node-RED or Grafana with CSV export",
@@ -261,7 +282,7 @@ req("R13", "TTN community server (free), webhook to a local Node-RED or Grafana 
 req("R14", "316 stainless electrodes; epoxy-sealed probes; life unverified", "12 months buried", "At risk")
 
 # ---------------------------------------------------------------- Results
-print("\nResults against RMS-REQ-001 v0.3")
+print("\nResults against RMS-REQ-001 v0.4")
 order = {"Not met": 0, "At risk": 1, "Not verifiable at TRL 3": 2, "Met on paper": 3, "Met": 4}
 RESULTS.sort(key=lambda r: (order[r[3]], int(r[0][1:])))
 for rid, v, t, st in RESULTS:

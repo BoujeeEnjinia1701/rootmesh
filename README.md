@@ -10,13 +10,52 @@ Solar-powered stakes that measure soil moisture, temperature and EC and report o
 
 [Interactive 3D model](media/viewer.html) · [Concept blueprint (PDF)](media/concept-blueprint.pdf) · [General arrangement RMS-DWG-001 (PDF)](cad/drawings/RMS-DWG-001.pdf) · [Sizing calculations](docs/04-calcs/01-sizing.md) · [Review note](docs/REVIEW.md)
 
+## Concept rationale
+
+Soil moisture only helps an irrigation decision if it is measured where the roots are, at more than one depth, and often enough to see the root zone drying between waterings. A buried stake with two capacitive probes, an EC pair and a temperature sensor answers that directly, and LoRaWAN lets one cheap gateway at the farmhouse collect a whole field without SIM cards or subscriptions. The stake sips about 2.6 mAh a day, so a palm-sized solar panel and a small LiFePO4 cell keep it running through a season with no battery changes.
+
+RootMesh is open and garage-buildable because the growers who most need measured soil data are the ones least able to pay $150 to $600 a point for closed commercial nodes. Every part is a hobby-grade module, a hardware-store pipe or a printed piece, the known failure modes of cheap probes are designed out in the open, and a grower, extension office or school can build, repair and recalibrate the stakes without a vendor.
+
+## Burning platform
+
+In most regions of the world, more than 70 % of freshwater goes to agriculture ([World Bank, 2017](https://blogs.worldbank.org/en/opendata/chart-globally-70-freshwater-used-agriculture)), and irrigated land, about a fifth of cultivated area, grows about 40 % of the world's crops ([FAO, State of the World's Land and Water Resources, fast facts](https://www.fao.org/fileadmin/user_upload/newsroom/docs/en-solaw-facts_1.pdf)). Much of that water comes from aquifers that are falling: India, the largest groundwater user in the world, draws about 230 km³ a year, over a quarter of the global total, and more than 60 % of its irrigated agriculture depends on groundwater ([World Bank, 2012](https://www.worldbank.org/en/news/feature/2012/03/06/india-groundwater-critical-diminishing)).
+
+Better timing is one of the cheapest levers. A systematic review of U.S. studies found that scheduling irrigation with soil water sensors used about 38 % less water than traditional scheduling, with similar or higher yields ([Datta and Taghvaeian 2023, *Agricultural Water Management*](https://www.sciencedirect.com/science/article/pii/S0378377423000136)). Yet field-ready wireless soil sensors still cost $150 to $600 or more per measurement point (see Problem below), which keeps them off most small farms.
+
+## Where it could be used
+
+### By industry
+
+| Industry | Use |
+| --- | --- |
+| Vegetable and market gardening | Know when beds on drip or furrow irrigation are drying at 150 and 300 mm, and stop overwatering shallow-rooted crops |
+| Orchards and vineyards | Track deep moisture and salinity through the season in a few representative blocks, and time deficit irrigation |
+| Row and field crops | Place a few stakes per field or pivot to decide when to start an irrigation cycle |
+| Agricultural extension and research | Deploy many low-cost points to map variation across soils and teach irrigation scheduling with real data |
+| Urban and community gardens | Share one gateway across many plots and volunteers, with one dashboard for watering rotas |
+| Parks, sports turf and landscaping | Skip scheduled watering when the root zone is still wet |
+
+### By country or region
+
+| Country or region | Why it matters there |
+| --- | --- |
+| India | The world's largest groundwater user; more than 60 % of irrigated agriculture depends on groundwater, and 29 % of assessed groundwater blocks were semi-critical, critical or overexploited in 2004 ([World Bank, 2012](https://www.worldbank.org/en/news/feature/2012/03/06/india-groundwater-critical-diminishing)) |
+| Sub-Saharan Africa (for example Kenya) | Only about 4 % of land is irrigated, against 37 % in Asia ([IFPRI, 2010](https://www.ifpri.org/blog/irrigating-africa/)); new small-scale schemes need low-cost tools to make scarce water go further from the start |
+| United States (High Plains) | Water levels in the High Plains aquifer fell by an area-weighted average of 16.5 ft (about 5.0 m) from predevelopment to 2019, a loss of about 286 million acre-feet of stored water ([USGS, 2023](https://pubs.usgs.gov/publication/sir20235143/full)) |
+| Spain | Spain used about 16.7 billion m³ of irrigation water in 2010, about 42 % of the EU total ([European Parliamentary Research Service, 2019](https://www.europarl.europa.eu/RegData/etudes/BRIE/2019/644216/EPRS_BRI(2019)644216_EN.pdf)), and most of its freshwater abstraction goes to agriculture |
+| Australia (Murray-Darling Basin) | The Basin accounted for 62 % of Australia's irrigation water use in 2020-21, about 4.9 million ML ([Australian Bureau of Statistics, 2022](https://www.abs.gov.au/statistics/industry/agriculture/water-use-australian-farms/latest-release)), where irrigators budget water against their entitlements |
+
+## What sparked the idea
+
+The idea traces back to the USDA's field guide *Estimating Soil Moisture by Feel and Appearance* (April 1998), which still underpins much irrigation scheduling advice. It asks growers to dig samples with a probe, auger or shovel in 1 ft increments down to the root depth at three or more sites per field, squeeze each one in the hand and match it to photographs, and says that with experience the method reaches about 5 % accuracy ([USDA NRCS](https://www.wcc.nrcs.usda.gov/ftpref/wntsc/waterMgt/irrigation/EstimatingSoilMoisture.pdf)). RootMesh keeps the same logic, several sites and more than one depth in the root zone, but leaves the probes in the ground and sends the readings to the farmhouse every 20 minutes, so the sampling happens without the walk and the guesswork.
+
 ## Problem
 
 Irrigation decisions rely on guesswork without cheap, field-hardy soil sensing. Commercial wireless soil nodes cost about $150 to $600 or more per measurement point, and the cheap hobby probes corrode and drift when buried.
 
 ## Concept
 
-Solar-powered stakes that measure soil moisture, temperature and EC and report over LoRa to a single gateway and dashboard. Each stake reads water content at 150 mm and 300 mm, bulk EC and soil temperature every 20 min, runs on a 0.5 W panel and a small LiFePO4 cell, carries its antenna at about 1 m on the flagged marker rod, and costs about $55.50 in parts. A pilot set of three stakes and an indoor gateway is $256.50 (indicative), within the $300 budget.
+Solar-powered stakes that measure soil moisture, temperature and EC and report over LoRa to a single gateway and dashboard. Each stake reads water content at 150 mm and 300 mm, bulk EC and soil temperature every 20 min, runs on a 0.5 W panel and a small LiFePO4 cell, carries its antenna at about 1 m on the flagged marker rod, and costs about $55.50 in parts. A pilot set of three stakes, an indoor gateway and a steel slot tool that pre-cuts the fin path is $266.50 (indicative), within the $300 budget.
 
 The sizing note [RMS-CAL-001](docs/04-calcs/01-sizing.md) finds 8 of 14 requirements met on paper and 5 at risk: moisture accuracy, range through tall crops, head and cell temperature in bare hot soil, installation in firm dry soil and probe life. The parametric model is `cad/src/model.py` (STEP and STL in `cad/step` and `cad/stl`).
 
@@ -32,6 +71,7 @@ Full design precis: [docs/02-concept.md](docs/02-concept.md)
 - 600 mAh LiFePO4 cell below grade
 - 0.5 W PV panel on a printed ASA head over a PVC stake tube
 - Indoor LoRaWAN gateway on The Things Network and an open-source dashboard
+- Steel slot tool with a depth stop, one per set, to pre-cut the fin path before installation
 
 The working bill of materials is in [bom/bom.csv](bom/bom.csv).
 
@@ -58,4 +98,4 @@ Controlled documents follow the portfolio [documentation standard](.kit/STANDARD
 - **Hardware** (CAD, drawings, BOM, electronics): [CERN-OHL-S v2](LICENSE)
 - **Software** (firmware, scripts, notebooks): [MIT](LICENSE-SOFTWARE)
 
-Part of the open hardware portfolio at [amishchadha.com](https://amishchadha.com).
+A project of the [Design Molecule](https://designmolecule.com) lab.
