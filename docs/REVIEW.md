@@ -184,3 +184,31 @@ The slot tool adds a pointed steel blade struck with a mallet: eye protection, g
 ### TRL 4
 
 TRL 4 remains on hold by Amish's instruction. No hardware, test, trial, PCB or firmware work was started. The field calibration (A4), a timed installation trial with the slot tool and any build of it wait for Amish to lift the cap.
+
+## Session 2026-09-26: product appearance model and photoreal renders
+
+Amish chose RootMesh for the first batch of product renders on 2026-09-26. This session added an appearance model for photoreal renders; the massing model, BOM, calculations and drawing are unchanged.
+
+### What was done
+
+- `cad/src/product_model.py` (new): `product_parts()` returns 85 parts (18 shell, 7 internal, 60 context) with colour, material class, BOM line, group and explode offset, plus `TITLE` and three `RENDER_VIEWS` (hero, exploded, detail). It imports `PARAMS` and `derived()` from `cad/src/model.py`, and every main dimension and interface (tube, socket, head radius and height, 30 degree slope, panel size, board and cell positions, fin, windows, sensing depths, EC pitch, temperature probe depth, marker rod, flag and antenna height) is taken from there. Appearance detail added:
+  - head with filleted top and bottom edges, a grip-rib band, a dark nameplate with a teal line, a green status light behind a clear lens, a gland nut and dome on the coax boss and a white ePTFE vent disc;
+  - a solar cap split from the head on a parting line parallel to the slope, carrying the panel (cell grid and busbars) and two cap screws;
+  - controller board with the LoRaWAN module shield, charger IC and connectors; O-ring; LiFePO4 cell with terminals in its holder;
+  - stake tube with eased ends; sensor fin with filleted edges, teal depth marks below each window, the capacitive probes with an epoxy edge seal, a stainless temperature sheath and stainless EC electrodes;
+  - marker rod with a fabric flag, cable ties along the coax, and the sleeve dipole with its clip;
+  - context: a two-layer soil block cut away on the plane through the stakes, two more stakes, and the gateway on a short timber post with bracket, status light and USB lead.
+- `README.md`: the hero image is now `media/render-hero.png`, with a link to `media/render-exploded.png`. The render files are produced separately.
+- Matplotlib self-check previews (not committed) were used to check that the hero, exploded and detail views read clearly.
+
+### Where the appearance model differs from model.py
+
+1. **Solar cap as a separate part.** `model.py` has a one-piece printed head. The appearance model splits a 10 mm cap off the top on a parting line and shows it exploded with the panel. Proposed, awaiting Amish. Options: (A) keep the one-piece head and read the line as cosmetic; (B) adopt a separate cap with the panel bonded to it, sealed to the head by a second O-ring. Recommendation: B, because the panel and board could then be serviced without pulling the stake; size the second seal in the next design step.
+2. **Status light.** A green status LED behind a clear lens on the front of the head is not in the BOM or the energy budget. Proposed, awaiting Amish. Recommendation: keep it, driven as a brief blink after each uplink and on a magnet or button wake only, and add its charge to the RMS-CAL-001 energy budget before adopting it.
+3. **Gateway outdoors on a post.** `model.py` and RMS-DDR-001 D3 keep the TTIG-class gateway indoors at the farmhouse; the hero shows it on a short timber post behind the stakes so one frame explains the system. Proposed, awaiting Amish. Recommendation: keep the pilot gateway indoors as decided and treat the post as a render layout only; the render note says so.
+4. **Stake spacing.** The hero places three stakes 330 mm apart on one section plane. In the field they stand in different parts of a block or field. Render layout only; no change proposed.
+5. **Colours.** The massing colours are replaced with product colours: white head and cap, light grey tube, mid-grey fin, black probes, stainless electrodes and temperature sheath, orange rod and flag. Appearance only; no change proposed.
+
+### TRL
+
+This is an appearance model only, for renders. It adds no tolerances, fabrication detail, PCB layout or test work. `trl` stays 3 and TRL 4 remains on hold.
