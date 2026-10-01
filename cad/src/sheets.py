@@ -53,8 +53,9 @@ def ortho_cells(k, views, names=("front", "top", "right")):
     gap, lab = 14, 12
     dims = {n: _viewbox(Path(views[n]).read_text())[2:] for n in names}
     fw, fh = dims["front"]; tw, th = dims["top"]; rw, rh = dims["right"]
-    ax += (aw - (k * (max(fw, tw) + rw) + gap)) / 2
-    ay += (ah - (k * (th + max(fh, rh)) + gap + 2 * lab)) / 2
+    dl = 11   # room Sheet.add_ortho reserves for its overall dimensions
+    ax += (aw - (k * (max(fw, tw) + rw) + gap + dl)) / 2 + dl
+    ay += (ah - (k * (th + max(fh, rh)) + gap + 2 * lab + dl)) / 2 + dl
     colw = k * max(fw, tw)
     front_y = ay + k * th + lab + gap
     return {"top": (ax, ay, colw, k * th), "front": (ax, front_y, colw, k * max(fh, rh)),
@@ -101,12 +102,13 @@ def main():
     elev = safe_project_views(full, work / "full", names=("front", "iso"))
     bb = stake.bounding_box()
 
-    s = Sheet(project="RootMesh", title="General arrangement, sensor stake", dwg_no="RMS-DWG-001", rev="P2",
+    s = Sheet(project="RootMesh", title="General arrangement, sensor stake", dwg_no="RMS-DWG-001", rev="P3",
               author="Amish Chadha", date=DATE, scale=0.2, theme="technical",
               material="ASA head, PVC tube, PETG or ASA fin, 316 stainless electrodes; bought-in parts per bom/bom.csv. "
                        "PRELIMINARY, NOT FOR FABRICATION",
               revisions=[("P1", "Preliminary GA for TRL 3 (from cad/src/model.py)", DATE, "AC"),
-                         ("P2", "Slot tool note added (RMS-DDR-002)", DATE, "AC")])
+                         ("P2", "Slot tool note added (RMS-DDR-002)", DATE, "AC"),
+                         ("P3", "Layout and labels tidied", DATE, "AC")])
     s.add_ortho(views)
     k = s.scale
     c = ortho_cells(k, views)
@@ -121,17 +123,18 @@ def main():
     L.append(_t(xr + 24, Z(0) - 1, "GRADE", 2.0, 600, ACC, "end"))
     # vertical dimensions on the left, from grade
     for i, (zz, txt) in enumerate([(D["head_top"], f"{D['head_top']:.0f} head top"),
-                                   (-P["depths"][0], f"{P['depths'][0]:.0f} probe 1"),
-                                   (-P["depths"][1], f"{P['depths'][1]:.0f} probe 2"),
                                    (D["ec_bot"], f"{-D['ec_bot']:.0f} EC tips")]):
-        xd = xl - 6 - 5 * i
+        xd = xl - 13 - 5 * i
         L.append(ext(X(0) - 2, Z(zz), xd - 1, Z(zz)))
         L += dim_v(xd, Z(zz), Z(0), txt)
-    # right side: temperature probe depth and fin bottom
-    L.append(ext(X(P["fin_w"] / 2 + P["t_d"]), Z(-P["t_depth"]), xr + 8, Z(-P["t_depth"])))
-    L += dim_v(xr + 7, Z(0), Z(-P["t_depth"]), f"{P['t_depth']:.0f} temp", side=1)
-    L.append(ext(X(P["fin_w"] / 2), Z(P["fin_bot"]), xr + 14, Z(P["fin_bot"])))
-    L += dim_v(xr + 13, Z(0), Z(P["fin_bot"]), f"{-P['fin_bot']:.0f} fin foot", side=1)
+    # right side, between the front and right views: probe depths, temperature probe and fin foot
+    for i, (dep, txt, x0e) in enumerate([(P["depths"][0], f"{P['depths'][0]:.0f} probe 1", P["tube_od"] / 2),
+                                         (P["depths"][1], f"{P['depths'][1]:.0f} probe 2", P["tube_od"] / 2),
+                                         (P["t_depth"], f"{P['t_depth']:.0f} temp", P["fin_w"] / 2 + P["t_d"]),
+                                         (-P["fin_bot"], f"{-P['fin_bot']:.0f} fin foot", P["fin_w"] / 2)]):
+        xd = xr + 1.5 + 4.6 * i
+        L.append(ext(X(x0e), Z(-dep), xd + 1, Z(-dep)))
+        L += dim_v(xd, Z(0), Z(-dep), txt, side=3.4)
     # horizontal: EC pitch and fin width
     # leaders on the right view (from +X: Y to the right, Z up)
     x, y, w, h = c["right"]
@@ -145,8 +148,7 @@ def main():
 
     # ---- top view: slope direction and panel
     x, y, w, h = c["top"]
-    L.append(_t(x + w / 2, y - 2, f"panel {P['panel'][0]:.0f} x {P['panel'][1]:.0f} at {P['tilt']:.0f} deg, faces +X (equator)",
-                2.0, 400, MUTED, "middle"))
+    # panel orientation is stated in the notes box (kept off the top view)
 
     # ---- installed elevation at 1:20 on the left of the sheet
     ke = 0.05
@@ -170,7 +172,7 @@ def main():
     s.add_svg(elev["iso"], 276, 32, 140, 100, label="Isometric view", sublabel="Not to scale")
     s.add_notes("Main dimensions and interfaces (mm)", [
         f"Tube {P['tube_od']:.0f} OD x {P['tube_id']:.0f} ID PVC, Z {P['tube_bot']:.0f} to {P['tube_top']:.0f}; head socket {P['socket_depth']:.0f} deep",
-        f"Head {2 * P['head_r']:.0f} dia ASA, top {D['head_top']:.0f} above grade; panel {P['panel'][0]:.0f} x {P['panel'][1]:.0f} at {P['tilt']:.0f} deg",
+        f"Head {2 * P['head_r']:.0f} dia ASA, top {D['head_top']:.0f} above grade; panel {P['panel'][0]:.0f} x {P['panel'][1]:.0f} at {P['tilt']:.0f} deg, faces +X",
         f"Fin {P['fin_w']:.0f} x {P['fin_t']:.0f} x {D['fin_len']:.0f}, spigot {P['tube_id'] - 0.6:.1f} dia into the tube",
         f"Probe windows centered {P['depths'][0]:.0f} and {P['depths'][1]:.0f} deep, {P['probe_l']:.0f} long",
         f"DS18B20 at {P['t_depth']:.0f}; EC rods {P['ec_d']:.0f} dia at {P['ec_pitch']:.0f} pitch, {P['ec_exposed']:.0f} exposed",
