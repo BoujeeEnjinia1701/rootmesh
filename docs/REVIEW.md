@@ -218,3 +218,57 @@ This is an appearance model only, for renders. It adds no tolerances, fabricatio
 - Kit 1.5.0 synced: STANDARDS v1.5 (sections 12 to 15: product renders, storefront images and image quality, public release, authorship and signing), `.kit/cards.py`, `.kit/image_qc.py`, `.kit/release_gate.py`, issue templates, and the `/render-product` and `/release` commands. `CLAUDE.md` now matches `.kit/CLAUDE.md`.
 - Every `media/render-*.png` recaptioned from its original render with the new layout: the title, concept label and repository sit in a band above the render and the view note in a band below it, each line wrapped to the image width, so no text overlaps other text or the render or runs off the image. `media/card.png` and `media/social-preview.png` regenerated with the same rules.
 - `python .kit/image_qc.py` and `python .kit/release_gate.py` pass. trl stays 3.
+
+## Session 2026-10-01: kit 1.7.0, design for construction and prototype build plan
+
+Amish approved the build plan format on 2026-09-30 and asked for it across all repos, with open decisions kept in a separate register; on 2026-10-01 he asked that budgets be treated as value-engineering targets. This session applied both to RootMesh at TRL 3. Nothing was built or tested.
+
+### What was done
+
+- Kit 1.7.0 installed (`.kit/`, `.claude/commands/`); `CLAUDE.md` matches `.kit/CLAUDE.md`.
+- `cad/src/model.py` rewritten as a constructable model: `build_components()` gives every part, `build_parts()` groups them by BOM line for the concept media, `slot_tool_components()` gives the slot tool, and `python cad/src/model.py --check` runs 331 constructability checks (no overlaps, every joint touches, board and cell holder pass their openings, cap screws clear the panel, gland nut clears the board, fin halves fit a 300 mm print bed). All pass. STEP and STL exported for the assembly and every made part (`cad/step`, `cad/stl`).
+- `docs/decisions/0003-design-for-construction.md` (RMS-DDR-003 v0.1, Draft): the design changes below, made under Amish's 2026-09-30 instruction to make the design physically buildable; open for his review.
+- `cad/src/build_plan_media.py` (new): overview, slot tool overview, ten making sketches RMS-DWG-101 to 110, a fin inside-face layout, eleven joint close-ups, sixteen assembly step pictures and a wiring diagram, all drawn from the model.
+- `docs/05-build-plan.md` (RMS-BLD-001 v0.1) and `docs/06-design-decisions.md` (RMS-DEC-001 v0.1), new.
+- `bom/bom.csv` and `bom/bom-notes.md`: lines 2, 4, 5, 7, 11, 12 and 15 updated; line 16 (head fixings and bonding) added.
+- `docs/04-calcs/sizing.py` and RMS-CAL-001 v0.3, RMS-REQ-001 v0.5, RMS-PRC-001 v0.5: re-run and updated for the constructable design; budget wording changed to a value-engineering target.
+- RMS-DWG-001 Rev P4; concept media (`media/hero.png`, `exploded.png`, `cutaway.png`, `flow.png`, `concept-blueprint.*`, `model.glb`, `viewer.html`) regenerated.
+- `project.yaml`: `design_state: constructable`; RMS-DDR-003, the build plan, the register and the media script added to `trl_evidence`; `budget_usd` unchanged at 300.
+- `README.md`: value-engineering line, build plan and register links, a "Building the prototype" section with the overview picture (placed before "Repository layout", since this README has no "Safety" section), updated costs.
+
+### Design changes made for construction (RMS-DDR-003)
+
+1. Head split into a printed body bonded over the tube and a removable cap carrying the panel, sealed by a 64 x 2 mm face O-ring and held by two M3 screws with sealing washers into heat-set inserts; body wall 5 mm (was 3 mm); the one-piece head could not take the board and its O-ring sealed nothing.
+2. Board held in two printed guide slots.
+3. Fin topped by a 42 mm collar and a 35.4 mm spigot bonded in the tube; the tube moved up 14 mm (still 170 mm long) so the upper probe stays centred at 150 mm; auger hole 110 mm deep (was 120 mm).
+4. Fin printed in two glued halves with probe slots, electronics pockets, wire channels, a temperature probe bore and electrode grooves; windows 19 mm wide (was 28 mm).
+5. Temperature probe recessed into the fin edge (0.4 mm proud; it stood 7 mm out and would have been torn off).
+6. Round tip replaced by a wedge between the electrodes; each electrode one 80 mm rod (15 mm held, 5 mm sleeved, 60 mm bare, as before).
+7. Printed cell holder standing on the spigot, cell centre still 62 mm deep.
+8. Coax gland moved to 100 mm above grade, turned toward the front, clear of the board.
+9. Vent moved to the back right, clear of the screw bosses.
+10. Two printed antenna clips and four cable ties in place of an overlapping block and a free-hanging lead.
+11. Slot tool handle through a cross hole with two shaft collars; depth stop clamped by an M5 thumb screw; blade 650 mm as the BOM says.
+
+### Key results
+
+- Requirement status unchanged: 8 met, 5 at risk (R1, R5, R9, R10, R14), 1 not verifiable at TRL 3 (R8), none not met.
+- R10: with the slot tool 386 N in moist loam (was 376 N) and 1,245 N in firm dry loam (was 1,216 N); the fin now starts 10 mm deeper.
+- R9: the deepest cell centre that fits is now 62 mm (46.8 °C), where the cell already sits.
+- Cost: USD 59.00 a stake (R12's USD 60 met by USD 1); pilot set USD 281.00. Value-engineering target: USD 300. Estimated cost of the constructable design: USD 281 (USD 19 under the target).
+
+### Proposed, awaiting Amish
+
+All open decisions are in `docs/06-design-decisions.md`: accept RMS-DDR-003; fin print size (A1); head bonded to the tube (A2); the R9 response (P1); first users and region (O1); the status light; the gateway in the hero render.
+
+### Stale images
+
+The design changed visibly (two-part head with a parting line and screw heads, collar on the fin, narrower windows, wedge tip, antenna clips). `media/render-hero.png`, `render-exploded.png`, `render-detail.png`, `media/card.png`, `media/social-preview.png` and the appearance model `cad/src/product_model.py` still show the concept and need regenerating on Amish's Mac.
+
+### Safety
+
+The build plan carries eight safety stops (cell, charging, slot tool, radio, field). The slot tool is a pointed steel blade struck with a mallet; grinding steel and epoxy work are added workshop hazards. The safety case is otherwise unchanged.
+
+### Recommended next step
+
+Review RMS-DDR-003 and the register. TRL 4 (building to this plan) stays on hold until Amish lifts the cap.

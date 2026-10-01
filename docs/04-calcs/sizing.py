@@ -216,14 +216,14 @@ for label, mean, amp in (("bare soil, hot summer", 35.0, 20.0), ("under a crop c
 A_hot = 20.0 * math.exp(-zc / Dd)
 # F4 (RMS-DDR-002): how deep would the cell have to sit to stay at or below 40 C in bare hot soil?
 z_need = Dd * math.log(20.0 / (40.0 - 35.0))
-spigot_top = -(P["fin_top"] + P["spigot_l"] - 10)       # depth of the fin spigot top inside the tube
+cell_floor = -D["cell_floor"]                              # depth of the cell holder base (RMS-DDR-003)
 win_top = P["depths"][0] - P["probe_l"] / 2
-z_max = spigot_top - P["cell_l"] / 2                      # deepest cell center above the spigot
+z_max = cell_floor - P["cell_l"] / 2                      # deepest cell center: the cell resting on the holder base
 A_max = 20.0 * math.exp(-z_max / 1000 / Dd)
-out("F4", f"cell center for 40 C or less in bare hot soil: {z_need * 1000:.0f} mm deep; the fin spigot reaches up to "
-          f"{spigot_top:.0f} mm and the upper probe window starts at {win_top:.0f} mm, so the deepest cell center that fits "
-          f"is about {z_max:.0f} mm ({35 + A_max:.1f} C); a deeper cell alone cannot meet R9 without moving the "
-          f"150 mm probe that R1 fixes")
+out("F4", f"cell center for 40 C or less in bare hot soil: {z_need * 1000:.0f} mm deep; the cell holder stands on the "
+          f"fin spigot with its base at {cell_floor:.0f} mm and the upper probe window starts at {win_top:.0f} mm, so the "
+          f"deepest cell center that fits is about {z_max:.0f} mm ({35 + A_max:.1f} C), where the cell already sits; a "
+          f"deeper cell alone cannot meet R9 without moving the 150 mm probe that R1 fixes")
 req("R9", f"head about {T_head:.0f} C at 45 C air (parts rated 85 C); cell up to {35 + A_hot:.0f} C in bare hot soil",
     "-10 to 60 C at the head; -5 to 40 C at the cell", "At risk")
 v_l = D["head_air_l"]
@@ -242,7 +242,7 @@ A_sec = (D["fin_section_mm2"] + 2 * math.pi * (P["ec_d"] / 2) ** 2) / 1e6
 # inside it. Shaft friction is kept unchanged (conservative: the fin faces still displace 2 mm of soil each side)
 A_slot = (D["fin_section_mm2"] - D["slot_area_mm2"]) / 1e6
 per = D["fin_perimeter_mm"] / 1000
-fin_in = (P["tube_bot"] - P["fin_bot"]) / 1000
+fin_in = (D["collar_bot"] - P["fin_bot"]) / 1000      # below the collar, which sits at the auger hole bottom
 forces, forces_slot = {}, {}
 for label, qc, fs in (("moist loam (after irrigation)", 0.5e6, 10e3), ("firm dry loam", 2.0e6, 30e3)):
     f = qc * A_sec + fs * per * fin_in
@@ -267,7 +267,7 @@ req("R11", f"head {D['head_top']:.0f} mm; flag {P['flag_z']:.0f} mm, rod {D['rod
 # ---------------------------------------------------------------- H. Cost (R12) and data (R13, R14)
 print("\nH. Cost")
 rows = list(csv.DictReader((ROOT / "bom" / "bom.csv").open()))
-stake = sum(float(r["unit_cost_usd"]) * float(r["qty"]) for r in rows if int(r["item"].split()[0]) <= 12) / 3
+stake = sum(float(r["unit_cost_usd"]) * float(r["qty"]) for r in rows if int(r["item"].split()[0]) not in (13, 14, 15)) / 3
 total = sum(float(r["unit_cost_usd"]) * float(r["qty"]) for r in rows)
 budget_usd = None
 for line in (ROOT / "project.yaml").read_text().splitlines():
@@ -275,14 +275,14 @@ for line in (ROOT / "project.yaml").read_text().splitlines():
         budget_usd = float(line.split(":")[1].split("#")[0])
 tool = sum(float(r["unit_cost_usd"]) * float(r["qty"]) for r in rows if int(r["item"].split()[0]) == 15)
 out("H1", f"one stake ${stake:.2f}; three stakes ${3 * stake:.2f}; gateway $90.00; slot tool ${tool:.2f}; pilot set ${total:.2f} "
-          f"against budget ${budget_usd:.0f} (headroom ${budget_usd - total:.2f})")
+          f"against the value-engineering target of ${budget_usd:.0f} (${budget_usd - total:.2f} under the target)")
 req("R12", f"${stake:.2f} per stake; ${total:.2f} pilot set", "$60 per stake; $300 pilot set", "Met")
 req("R13", "TTN community server (free), webhook to a local Node-RED or Grafana with CSV export",
     "No paid subscription; CSV export; open dashboard", "Met")
 req("R14", "316 stainless electrodes; epoxy-sealed probes; life unverified", "12 months buried", "At risk")
 
 # ---------------------------------------------------------------- Results
-print("\nResults against RMS-REQ-001 v0.4")
+print("\nResults against RMS-REQ-001 v0.5")
 order = {"Not met": 0, "At risk": 1, "Not verifiable at TRL 3": 2, "Met on paper": 3, "Met": 4}
 RESULTS.sort(key=lambda r: (order[r[3]], int(r[0][1:])))
 for rid, v, t, st in RESULTS:

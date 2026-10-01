@@ -1,4 +1,4 @@
-"""RootMesh general arrangement sheet RMS-DWG-001, Rev P2 (TRL 3).
+"""RootMesh general arrangement sheet RMS-DWG-001, Rev P4 (TRL 3, constructable design).
 
 Run from the repo root:  python cad/src/sheets.py
 Writes cad/drawings/RMS-DWG-001.svg, .pdf and .png from the parametric model in
@@ -17,6 +17,7 @@ from drawing import Sheet, _viewbox, _t, M, TB_Y, INK, MUTED  # noqa: E402
 from model import PARAMS as P, build_parts, derived  # noqa: E402
 
 DATE = "2026-09-25"
+DATE_P4 = "2026-10-01"
 ACC = "#0F766E"
 
 
@@ -102,13 +103,14 @@ def main():
     elev = safe_project_views(full, work / "full", names=("front", "iso"))
     bb = stake.bounding_box()
 
-    s = Sheet(project="RootMesh", title="General arrangement, sensor stake", dwg_no="RMS-DWG-001", rev="P3",
-              author="Amish Chadha", date=DATE, scale=0.2, theme="technical",
+    s = Sheet(project="RootMesh", title="General arrangement, sensor stake", dwg_no="RMS-DWG-001", rev="P4",
+              author="Amish Chadha", date=DATE_P4, scale=0.2, theme="technical",
               material="ASA head, PVC tube, PETG or ASA fin, 316 stainless electrodes; bought-in parts per bom/bom.csv. "
                        "PRELIMINARY, NOT FOR FABRICATION",
               revisions=[("P1", "Preliminary GA for TRL 3 (from cad/src/model.py)", DATE, "AC"),
                          ("P2", "Slot tool note added (RMS-DDR-002)", DATE, "AC"),
-                         ("P3", "Layout and labels tidied", DATE, "AC")])
+                         ("P3", "Layout and labels tidied", DATE, "AC"),
+                         ("P4", "Design for construction (RMS-DDR-003)", DATE_P4, "AC")])
     s.add_ortho(views)
     k = s.scale
     c = ortho_cells(k, views)
@@ -171,9 +173,10 @@ def main():
     s._layers += L
     s.add_svg(elev["iso"], 276, 32, 140, 100, label="Isometric view", sublabel="Not to scale")
     s.add_notes("Main dimensions and interfaces (mm)", [
-        f"Tube {P['tube_od']:.0f} OD x {P['tube_id']:.0f} ID PVC, Z {P['tube_bot']:.0f} to {P['tube_top']:.0f}; head socket {P['socket_depth']:.0f} deep",
-        f"Head {2 * P['head_r']:.0f} dia ASA, top {D['head_top']:.0f} above grade; panel {P['panel'][0]:.0f} x {P['panel'][1]:.0f} at {P['tilt']:.0f} deg, faces +X",
-        f"Fin {P['fin_w']:.0f} x {P['fin_t']:.0f} x {D['fin_len']:.0f}, spigot {P['tube_id'] - 0.6:.1f} dia into the tube",
+        f"Tube {P['tube_od']:.0f} OD x {P['tube_id']:.0f} ID PVC, Z {P['tube_bot']:.0f} to {P['tube_top']:.0f}; bonded {P['socket_depth'] - 2:.0f} into the head socket",
+        f"Head {2 * P['head_r']:.0f} dia ASA body and cap, parted at Z {P['split_z']:.0f}; O-ring and 2 M3 screws",
+        f"Head top {D['head_top']:.0f} above grade; panel {P['panel'][0]:.0f} x {P['panel'][1]:.0f} at {P['tilt']:.0f} deg, faces +X",
+        f"Fin {P['fin_w']:.0f} x {P['fin_t']:.0f} x {D['fin_len']:.0f} in two glued halves; collar {P['tube_od']:.0f} dia, spigot {P['spigot_d']:.1f}",
         f"Probe windows centered {P['depths'][0]:.0f} and {P['depths'][1]:.0f} deep, {P['probe_l']:.0f} long",
         f"DS18B20 at {P['t_depth']:.0f}; EC rods {P['ec_d']:.0f} dia at {P['ec_pitch']:.0f} pitch, {P['ec_exposed']:.0f} exposed",
         f"Cell 14500 LiFePO4 centered {-P['cell_z']:.0f} below grade",

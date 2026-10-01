@@ -33,12 +33,12 @@ person = human_figure(1750.0, x=600.0, y=380.0, z=GRADE)
 context = [Part("Soil block, cut away", soil, "#B7A58E"), person]
 
 render_all(
-    parts, project="RootMesh", title="Soil sensor stake concept", dwg_no="RMS-DWG-010", date="2026-09-25",
+    parts, project="RootMesh", title="Soil sensor stake concept", dwg_no="RMS-DWG-010", date="2026-10-01",
     key_figures=["Moisture at 150 and 300 mm, EC and temperature",
                  "LoRaWAN every 20 min at SF10: 0.37 s, 26.7 s/day",
                  "About 2.6 mAh/day; about 186 days dark (RMS-CAL-001)",
                  "Antenna at 1 m: 13.5 dB margin at 1 km (estimate)",
-                 "Pilot set: 3 stakes, gateway, slot tool $266.50 (indicative)"],
+                 "Pilot set: 3 stakes, gateway, slot tool $281 (indicative)"],
     scale_figure=False, context=context, cut_exclude=(NAMES["marker"], NAMES["antenna"]),
     flow={"title": "data flow, soil to irrigation decision (estimates)", "unit": "",
           "stages": [("Root-zone soil", "2 depths, EC, temp"), ("Stake reading", "every 20 min"),

@@ -3,9 +3,9 @@ doc_id: RMS-CAL-001
 title: RootMesh sizing calculations
 project: RootMesh
 doc_type: Calculation
-version: "0.2"
+version: "0.3"
 status: Draft
-date: '2026-09-25'
+date: '2026-10-01'
 author: Amish Chadha
 license: CERN-OHL-S-2.0
 revisions:
@@ -17,17 +17,23 @@ revisions:
   date: '2026-09-25'
   author: Amish Chadha
   change: Recommendations accepted by Amish (DDR-002); slot tool force case, cell depth check for R9, pilot set cost with the slot tool
+- version: "0.3"
+  date: '2026-10-01'
+  author: Amish Chadha
+  change: Re-run for the constructable design (RMS-DDR-003); push depth, head air volume, cell depth check and cost updated; budget treated as a value-engineering target
 ---
 
 # RootMesh sizing calculations
 
-On paper, RootMesh meets eight of its fourteen requirements, has five at risk, and has one that cannot be verified at TRL 3. No requirement is shown to be missed outright. The five at risk are moisture accuracy (R1), which depends on soil contact and calibration; range (R5), where raising the antenna to 1 m on the marker rod gives 13.5 dB of margin at 1 km, but a crop taller than the antenna can take 13 to 19 dB of it; temperature range (R9), where the head can reach about 64 °C and the cell about 47 °C in bare, hot soil; installation (R10), where pushing the fin into firm dry loam needs about 1.8 kN, more than one person can lean on it; and probe life (R14). Version 0.2 adds the two design responses Amish accepted on 2026-09-25 (RMS-DDR-002): a steel slot tool cuts the push force in moist loam from 517 N to 376 N, within one person's strength, but firm dry loam still needs about 1.2 kN; and a check of a deeper cell shows that no cell position that fits above the fin keeps the cell under 40 °C in bare, hot soil. The calculations also corrected three TRL 2 figures: days on the cell alone fall from about 240 to about 186 once LiFePO4 self-discharge is counted, the harvest ratio falls from about 70 to about 58 times daily need, and the pilot set rises from about $246 to $256.50 with the antenna feed and a vent ($266.50 with the slot tool added in v0.2). Every number in this note is printed by `docs/04-calcs/sizing.py`; the tag in brackets, for example [B4], is the line of that script's output that carries it.
+On paper, RootMesh meets eight of its fourteen requirements, has five at risk, and has one that cannot be verified at TRL 3. No requirement is shown to be missed outright. The five at risk are moisture accuracy (R1), which depends on soil contact and calibration; range (R5), where raising the antenna to 1 m on the marker rod gives 13.5 dB of margin at 1 km, but a crop taller than the antenna can take 13 to 19 dB of it; temperature range (R9), where the head can reach about 64 °C and the cell about 47 °C in bare, hot soil; installation (R10), where pushing the fin into firm dry loam needs about 1.8 kN, more than one person can lean on it; and probe life (R14). Version 0.2 adds the two design responses Amish accepted on 2026-09-25 (RMS-DDR-002): a steel slot tool cuts the push force in moist loam from 526 N to 386 N, within one person's strength, but firm dry loam still needs about 1.2 kN; and a check of a deeper cell shows that no cell position that fits above the fin keeps the cell under 40 °C in bare, hot soil. The calculations also corrected three TRL 2 figures: days on the cell alone fall from about 240 to about 186 once LiFePO4 self-discharge is counted, the harvest ratio falls from about 70 to about 58 times daily need, and the pilot set rises from about $246 to $256.50 with the antenna feed and a vent ($266.50 with the slot tool added in v0.2, and $281.00 for the constructable design of v0.3, $19.00 under the $300 value-engineering target). Every number in this note is printed by `docs/04-calcs/sizing.py`; the tag in brackets, for example [B4], is the line of that script's output that carries it.
 
 > **Safety:** These are first-principles estimates for a paper proof of concept. They do not replace measurement of the cell temperature in the field, a range walk, or checks of the charger's temperature cut-off. The stake holds a lithium cell; see RMS-PRC-001, Safety.
 
 ## Scope and method
 
-The note checks every requirement in RMS-REQ-001 v0.4 against the design in RMS-PRC-001 v0.4 and the parametric model `cad/src/model.py`. The script imports the model's `PARAMS` and `derived()`, so depths, heights, fin section and electrode geometry are the ones in the STEP files and in drawing RMS-DWG-001. It also reads `bom/bom.csv` and `budget_usd` in `project.yaml`. Run it from the repo root with `python docs/04-calcs/sizing.py`.
+Version 0.3 re-runs every figure for the constructable design of RMS-DDR-003: the fin is now pushed in from a collar 110 mm below grade, the head body has a thicker wall, the cell stands on a holder, and the BOM carries the parts added for construction. No requirement changed status.
+
+The note checks every requirement in RMS-REQ-001 v0.5 against the design in RMS-PRC-001 v0.5 and the parametric model `cad/src/model.py`. The script imports the model's `PARAMS` and `derived()`, so depths, heights, fin section and electrode geometry are the ones in the STEP files and in drawing RMS-DWG-001. It also reads `bom/bom.csv` and `budget_usd` in `project.yaml`. Run it from the repo root with `python docs/04-calcs/sizing.py`.
 
 The reference case is one stake in loam, sensing at 150 mm and 300 mm, reporting every 20 min at SF10 to an indoor gateway 1 km away, with 3 peak sun hours on the panel in the worst month.
 
@@ -121,32 +127,32 @@ In full sun at 45 °C air the panel reaches about 76 °C and the head interior a
 
 In bare, hot soil the cell exceeds the 40 °C limit of R9 by about 7 °C. The charger's 45 °C cut-off stops charging for part of the afternoon but does not stop the cell from warming. R9 is **at risk**.
 
-Amish accepted the recommendation to check a deeper cell (RMS-DDR-002). To stay at or below 40 °C in bare, hot soil the cell center would have to sit about 163 mm deep [F4]. The fin spigot rises inside the tube to 90 mm and the upper probe window starts at 110 mm, so the deepest cell center that fits is about 65 mm, which gives 46.5 °C, a gain of only 0.3 °C. A deeper cell alone therefore cannot meet R9 without moving the 150 mm probe that R1 fixes, and the cell stays at 62 mm. The remaining responses, shading the soil around the head or restating the cell limit to the chosen cell's rated discharge range while charging stays blocked above 45 °C, are a new proposal awaiting Amish (RMS-DDR-002, P1).
+Amish accepted the recommendation to check a deeper cell (RMS-DDR-002). To stay at or below 40 °C in bare, hot soil the cell center would have to sit about 163 mm deep [F4]. In the constructable design (RMS-DDR-003) the cell stands in a holder on the fin spigot, with the holder base 87 mm below grade, and the upper probe window starts at 110 mm, so the deepest cell center that fits is 62 mm, where the cell already sits (46.8 °C). Version 0.2 found about 65 mm (46.5 °C) before the holder was added. A deeper cell alone therefore cannot meet R9 without moving the 150 mm probe that R1 fixes, and the cell stays at 62 mm. The remaining responses, shading the soil around the head or restating the cell limit to the chosen cell's rated discharge range while charging stays blocked above 45 °C, are a new proposal awaiting Amish (RMS-DDR-002, P1).
 
-A sealed head holds about 308 cm³ of air. Heating from 20 to 64 °C raises its pressure by 15.1 kPa, three times the 4.9 kPa of 0.5 m immersion [F3]. Daily pumping of that size would work water past the seals, so an adhesive ePTFE vent membrane is added to the head (BOM line 12). Whether the head reaches IP67 and the buried part IP68 needs an immersion test, so R8 is **not verifiable at TRL 3**.
+A sealed head holds about 272 cm³ of air (308 cm³ before the body wall was thickened to 5 mm in v0.3). Heating from 20 to 64 °C raises its pressure by 15.1 kPa, three times the 4.9 kPa of 0.5 m immersion [F3]. Daily pumping of that size would work water past the seals, so an adhesive ePTFE vent membrane is added to the head (BOM line 12). Whether the head reaches IP67 and the buried part IP68 needs an immersion test, so R8 is **not verifiable at TRL 3**.
 
 ## G. Installation and geometry (R10, R11)
 
-The installer augers a 50 mm hole to the bottom of the tube, then pushes the fin 300 mm into undisturbed soil (330 mm with the tip). In moist loam after irrigation this takes about 517 N (53 kgf), about what one person can lean on the head (about 500 N) [G1, G2]. In firm dry loam it takes about 1,778 N (181 kgf), which one person cannot do [G1]. Without help, R10 is at risk.
+The installer augers a 50 mm hole 110 mm deep, to the bottom of the fin collar that the tube sits on (RMS-DDR-003), then pushes the fin 310 mm into undisturbed soil (340 mm with the tip). In moist loam after irrigation this takes about 526 N (54 kgf), about what one person can lean on the head (about 500 N) [G1, G2]. In firm dry loam it takes about 1,807 N (184 kgf), which one person cannot do [G1]. Without help, R10 is at risk.
 
-Amish accepted the slot tool suggestion (RMS-DDR-002). A printed blade would not survive firm soil, so the tool is a 32 x 8 mm mild steel flat bar ground to a point at the EC tip depth (485 mm), with a bolted T-handle and a printed depth-stop collar that rests on grade (BOM line 15, model `slot-tool.step`). The installer augers the 50 mm hole, drives the blade down the hole with a mallet, so the blows go into the tool rather than the stake head, withdraws it and then pushes the fin in. The EC rods (4 mm) pass inside the 8 mm slot, and the fin only widens the slot, displacing 2 mm of soil on each face, which keeps the probes in contact with undisturbed soil. Taking the tip resistance on the residual 176 mm² and keeping shaft friction unchanged (conservative), the fin needs about 376 N in moist loam and about 1,216 N in firm dry loam [G4, G5]. Moist soil is now within one person's 500 N with 25 % margin; firm dry loam is not. R10 stays **at risk**, and the installation guidance is to pre-wet the hole in dry soil.
+Amish accepted the slot tool suggestion (RMS-DDR-002). A printed blade would not survive firm soil, so the tool is a 32 x 8 mm mild steel flat bar ground to a point at the EC tip depth (485 mm), with a 20 mm round bar handle through a cross hole, held by two shaft collars, and a printed depth stop clamped by a thumb screw that rests on grade (BOM line 15, model `slot-tool.step`; fixings from RMS-DDR-003). The installer augers the 50 mm hole, drives the blade down the hole with a mallet, so the blows go into the tool rather than the stake head, withdraws it and then pushes the fin in. The EC rods (4 mm) pass inside the 8 mm slot, and the fin only widens the slot, displacing 2 mm of soil on each face, which keeps the probes in contact with undisturbed soil. Taking the tip resistance on the residual 176 mm² and keeping shaft friction unchanged (conservative), the fin needs about 386 N in moist loam and about 1,245 N in firm dry loam [G4, G5]. Moist soil is now within one person's 500 N with 23 % margin; firm dry loam is not. R10 stays **at risk**, and the installation guidance is to pre-wet the hole in dry soil.
 
 The head top is 171 mm above grade, the antenna spans 914 to 1,086 mm on the flexible rod, and the rod top is 1,000 mm with the flag centered at 840 mm [G3]. R11, as redefined for the antenna on the rod, is met.
 
 ## H. Cost (R12, R13, R14)
 
-From `bom/bom.csv`, one stake costs $55.50, three cost $166.50, and with the $90 gateway and the $10 slot tool the pilot set is $266.50 against the $300 budget, leaving $33.50 [H1]. All prices are indicative. R13 is met by design with The Things Network community server and a local open dashboard with CSV export. R14 (12 months buried) depends on the epoxy seal of the probe edges and on the stainless electrodes and cannot be shown by calculation; it stays **at risk**.
+From `bom/bom.csv`, one stake costs $59.00, three cost $177.00, and with the $90 gateway and the $14 slot tool the pilot set is $281.00. Value-engineering target: USD 300. Estimated cost of the constructable design: USD 281 (USD 19 under the target) [H1]. The $3.50 added per stake since v0.2 is the parts that make the design buildable (RMS-DDR-003): the two-part head, the fin halves, and BOM line 16 (inserts, cap screws, sealing washers, epoxy, sleeves and the prototype board). The per-stake figure in R12 ($60) is met by $1.00. All prices are indicative. R13 is met by design with The Things Network community server and a local open dashboard with CSV export. R14 (12 months buried) depends on the epoxy seal of the probe edges and on the stainless electrodes and cannot be shown by calculation; it stays **at risk**.
 
 ## Results
 
-*Table 6. Requirement status against RMS-REQ-001 v0.4 (from the script's results table).*
+*Table 6. Requirement status against RMS-REQ-001 v0.5 (from the script's results table).*
 
 | ID | Value | Target | Status |
 | --- | --- | --- | --- |
 | R1 | Depths 150 and 300 mm by model; accuracy unverified | 150 and 300 mm (±25 mm); ±3 % VWC after site calibration | At risk |
 | R5 | 13.5 dB margin at 1 km; tall crops take 13 to 19 dB | 90 % of uplinks at 1 km, indoor gateway, antenna on the marker rod | At risk |
-| R9 | Head about 64 °C at 45 °C air; cell up to 47 °C in bare hot soil; a deeper cell that fits gives 46.5 °C | -10 to 60 °C at the head; -5 to 40 °C at the cell | At risk |
-| R10 | With the slot tool 376 N in moist loam, 1,216 N in firm dry loam (without: 517 N, 1,778 N) | One person, 50 mm auger, 15 min; depths ±25 mm | At risk |
+| R9 | Head about 64 °C at 45 °C air; cell up to 47 °C in bare hot soil; the cell already sits as deep as fits (62 mm) | -10 to 60 °C at the head; -5 to 40 °C at the cell | At risk |
+| R10 | With the slot tool 386 N in moist loam, 1,245 N in firm dry loam (without: 526 N, 1,807 N) | One person, 50 mm auger, 15 min; depths ±25 mm | At risk |
 | R14 | Sealed probes, 316 stainless electrodes; life unverified | 12 months buried | At risk |
 | R8 | 15 kPa daily thermal pumping without a vent; vent added | Head IP67; buried IP68 at 0.5 m; UV-stable | Not verifiable at TRL 3 |
 | R2 | ±0.5 °C, -10 to 85 °C, at 225 mm | ±0.5 °C from -10 to 60 °C at about 225 mm | Met |
@@ -155,7 +161,7 @@ From `bom/bom.csv`, one stake costs $55.50, three cost $166.50, and with the $90
 | R6 | 19 times need at 1 sun hour; 186 days dark | Energy-neutral at 1 sun hour; 90 days dark | Met |
 | R7 | LiFePO4, 1.92 Wh, NTC 0 to 45 °C, PTC fuse | LiFePO4, 2 Wh or less, fused, charge 0 to 45 °C | Met |
 | R11 | Head 171 mm; flag 840 mm, rod 1,000 mm | Rigid head 300 mm or less; marker 1 m or more | Met |
-| R12 | $55.50 per stake; $266.50 pilot set | $60 per stake; $300 pilot set | Met |
+| R12 | $59.00 per stake; $281.00 pilot set (USD 19 under the value-engineering target) | $60 per stake; $300 pilot set | Met |
 | R13 | TTN community server, local dashboard, CSV | No paid subscription; CSV export; open dashboard | Met |
 
 Counts: met 8, at risk 5, not verifiable at TRL 3 1, not met 0.
@@ -173,3 +179,13 @@ Counts: met 8, at risk 5, not verifiable at TRL 3 1, not met 0.
 - R10: slot tool (BOM 15) added; push force in moist loam 517 N to 376 N, in firm dry loam 1,778 N to 1,216 N. Status unchanged (at risk).
 - R9: deeper cell checked; the deepest position that fits gives 46.5 °C against 46.8 °C, so the cell stays at 62 mm. Status unchanged (at risk).
 - R12: pilot set $256.50 to $266.50 with the slot tool; headroom $43.50 to $33.50. Status unchanged (met).
+
+## Changes in version 0.3
+
+Re-run on 2026-10-01 for the constructable design (RMS-DDR-003). No requirement changed status.
+
+- R10: the auger hole is now 110 mm deep (to the fin collar) and the fin is pushed 310 mm into undisturbed soil instead of 300 mm. Push force with the slot tool 376 N to 386 N in moist loam, 1,216 N to 1,245 N in firm dry loam; without it 517 N to 526 N and 1,778 N to 1,807 N. Still at risk.
+- R9: the cell now stands in a holder on the fin spigot; the deepest center that fits is 62 mm (46.8 °C), where it already sits. Still at risk.
+- R8: head air 308 cm³ to 272 cm³ with the 5 mm body wall; the pressure rise is unchanged at 15.1 kPa. Still not verifiable at TRL 3.
+- R12: one stake $55.50 to $59.00, pilot set $266.50 to $281.00, USD 19 under the USD 300 value-engineering target. Still met.
+

@@ -3,9 +3,9 @@ doc_id: RMS-PRC-001
 title: RootMesh design precis
 project: RootMesh
 doc_type: Design precis
-version: "0.4"
+version: "0.5"
 status: Draft
-date: '2026-09-25'
+date: '2026-10-01'
 author: Amish Chadha
 license: CERN-OHL-S-2.0
 revisions:
@@ -25,11 +25,15 @@ revisions:
   date: '2026-09-25'
   author: Amish Chadha
   change: Recommendations accepted by Amish (DDR-002)
+- version: "0.5"
+  date: '2026-10-01'
+  author: Amish Chadha
+  change: Constructable design (RMS-DDR-003) and build plan RMS-BLD-001; costs and installation figures updated; budget treated as a value-engineering target
 ---
 
 # RootMesh design precis
 
-RootMesh is a hand-installed soil sensor stake that measures volumetric water content at 150 mm and 300 mm, bulk EC and soil temperature, and reports every 20 min over LoRaWAN to one gateway at the farmhouse, from which an open dashboard shows root-zone depletion against a threshold the grower sets. The sizing note RMS-CAL-001 finds that a stake needs about 2.6 mAh a day including cell self-discharge, so a 0.5 W panel harvests about 58 times that need in the worst month and a 600 mAh LiFePO4 cell alone lasts about 186 days. With the antenna raised to about 1 m on the marker rod, the radio link has 13.5 dB of margin at 1 km. A stake costs $55.50 in parts, and a pilot set of three stakes, a gateway and a steel slot tool for installation costs $266.50, within the $300 budget. Eight of fourteen requirements are met on paper; five are at risk: moisture accuracy (R1), range through tall crops (R5), head and cell temperature in bare, hot soil (R9), pushing the fin into firm dry soil (R10) and probe life (R14). The slot tool brings installation in moist soil within one person's strength (about 376 N); firm dry soil still needs about 1.2 kN.
+RootMesh is a hand-installed soil sensor stake that measures volumetric water content at 150 mm and 300 mm, bulk EC and soil temperature, and reports every 20 min over LoRaWAN to one gateway at the farmhouse, from which an open dashboard shows root-zone depletion against a threshold the grower sets. The sizing note RMS-CAL-001 finds that a stake needs about 2.6 mAh a day including cell self-discharge, so a 0.5 W panel harvests about 58 times that need in the worst month and a 600 mAh LiFePO4 cell alone lasts about 186 days. With the antenna raised to about 1 m on the marker rod, the radio link has 13.5 dB of margin at 1 km. A stake costs $59.00 in parts, and a pilot set of three stakes, a gateway and a steel slot tool for installation costs $281.00. Value-engineering target: USD 300. Estimated cost of the constructable design: USD 281 (USD 19 under the target). Eight of fourteen requirements are met on paper; five are at risk: moisture accuracy (R1), range through tall crops (R5), head and cell temperature in bare, hot soil (R9), pushing the fin into firm dry soil (R10) and probe life (R14). The slot tool brings installation in moist soil within one person's strength (about 386 N); firm dry soil still needs about 1.2 kN. The design was made constructable on 2026-10-01 (RMS-DDR-003, open for Amish's review), and the prototype build plan [RMS-BLD-001](05-build-plan.md) shows how each part is made and fitted; decisions still open are in the design decisions register [RMS-DEC-001](06-design-decisions.md).
 
 ![Hero render](../media/hero.png)
 
@@ -54,12 +58,12 @@ Numbers match the exploded view (Figure 3) and `bom/bom.csv`.
 | # | Component | Choice | Notes |
 | --- | --- | --- | --- |
 | 1 | Solar panel | 5 V, 0.5 W, about 70 x 50 mm, on a 30 degree slope | Self-cleaning slope sheds rain and dust |
-| 2 | Head enclosure | Printed ASA cup, 72 mm diameter, O-ring socket over the tube | ASA for UV and heat; PETG softens near 70 °C |
+| 2 | Head enclosure | Printed ASA body, 72 mm diameter, bonded over the tube, and a removable cap carrying the panel, sealed by an O-ring and two screws (RMS-DDR-003) | ASA for UV and heat; PETG softens near 70 °C |
 | 3 | Controller board | STM32WLE5-class LoRaWAN module (for example Seeed Wio-E5, about $7; [Seeed Studio](https://www.seeedstudio.com/LoRa-E5-Wireless-Module-p-4745.html)) on a carrier with a LiFePO4 solar charger with NTC cut-off, a sensor power switch and the EC drive | One chip for radio and application; decided (RMS-DDR-001, D8) |
 | 4 | Antenna and feed | Half-wave sleeve dipole clipped to the top of the marker rod, centered about 1,000 mm above grade, with a 1.2 m RG174 lead through a gland on the head | Decided (RMS-DDR-001, D2); a dipole because a whip on the rod has no ground plane |
-| 5 | LiFePO4 cell | 14500, 3.2 V, 600 mAh (about 1.9 Wh), PTC fuse | Inside the tube below grade |
-| 6 | Stake tube | 42 mm OD PVC pressure pipe, 170 mm | Carries the cable and the cell; the head and fin plug into it |
-| 7 | Sensor fin | Printed carrier 36 x 12 mm in section, 310 mm long, two windows, pointed tip | Pushed into undisturbed soil below the auger hole |
+| 5 | LiFePO4 cell | 14500, 3.2 V, 600 mAh (about 1.9 Wh), PTC fuse | Inside the tube below grade, in a printed holder standing on the fin spigot |
+| 6 | Stake tube | 42 mm OD PVC pressure pipe, 170 mm | Carries the cable and the cell; bonded into the head and over the fin spigot |
+| 7 | Sensor fin | Printed carrier 36 x 12 mm in section, 310 mm long, in two glued halves, two windows, wedge tip, collar and spigot at the top | Pushed into undisturbed soil below the 110 mm auger hole |
 | 8 | Capacitive moisture probes (2) | v1.2-class boards with the NE555 replaced by a TLC555 and the edges sealed in epoxy, read as frequency | Fixes from the [Cave Pearl Project](https://thecavepearlproject.org/2020/10/27/hacking-a-capacitive-soil-moisture-sensor-for-frequency-output/) |
 | 9 | EC electrodes | Two 316 stainless rods, 4 mm diameter, 24 mm apart | Two-electrode, AC excitation; cell constant set by calibration |
 | 10 | Temperature probe | DS18B20 in a 6 mm stainless sheath, ±0.5 °C from -10 to 85 °C ([SparkFun](https://www.sparkfun.com/temperature-sensor-waterproof-ds18b20.html)) | Also compensates EC and moisture readings |
@@ -67,7 +71,8 @@ Numbers match the exploded view (Figure 3) and `bom/bom.csv`.
 | 12 | Seals and consumables | O-ring, IP68 glands, ePTFE vent membrane, desiccant, potting | The vent stops daily thermal pumping of about 15 kPa (RMS-CAL-001) |
 | 13 | LoRaWAN gateway | Indoor 8-channel gateway with Wi-Fi (The Things Indoor Gateway class, about $79 to $90; [Seeed Studio](https://www.seeedstudio.com/The-Things-Indoor-Gateway-EU-p-4709.html)) | Not in the exploded view; The Things Network for the pilot decided (RMS-DDR-001, D3) |
 | 14 | Dashboard | Open-source (for example Node-RED or Grafana) on an existing computer | Not in the exploded view |
-| 15 | Slot tool | 32 x 8 mm mild steel flat bar, 650 mm, pointed, with a bolted T-handle and a printed 80 mm depth-stop collar; one per set | Pre-cuts the fin and EC rod path; driven with a mallet, then withdrawn (RMS-DDR-002). Not in the exploded view |
+| 15 | Slot tool | 32 x 8 mm mild steel flat bar, 650 mm, pointed, with a 20 mm bar handle through a cross hole and a printed 80 mm depth stop; one per set | Pre-cuts the fin and EC rod path; driven with a mallet, then withdrawn (RMS-DDR-002). Not in the exploded view |
+| 16 | Head fixings and bonding | Two M3 heat-set inserts, two M3 cap screws with sealing washers, structural epoxy, heat-shrink sleeves, a 56 x 40 mm prototype board for the controller modules | Added for construction (RMS-DDR-003). Not in the exploded view |
 
 ![Exploded view](../media/exploded.png)
 
@@ -137,11 +142,11 @@ Raising the antenna to the top of the marker rod (RMS-DDR-001, D2) closes the li
 
 | Group | Indicative cost | Requirement |
 | --- | --- | --- |
-| One stake (items 1 to 12) | $55.50 | R12 ($60) met |
-| Three stakes | $166.50 | |
+| One stake (items 1 to 12 and 16) | $59.00 | R12 ($60) met |
+| Three stakes | $177.00 | |
 | Gateway (item 13) | $90.00 | |
-| Slot tool (item 15) | $10.00 | |
-| **Pilot set** | **$266.50** | R12 ($300) met, $33.50 headroom |
+| Slot tool (item 15) | $14.00 | |
+| **Pilot set** | **$281.00** | R12 ($300) met; USD 19 under the value-engineering target |
 | Reference: Dragino SE01 node | about $151 to $170 per point ([Choovio](https://www.choovio.com/product/se01-lb-lorawan-soil-moisture-ec-sensor/)) | |
 
 ## Key design choices
@@ -155,9 +160,9 @@ Amish decided the choices below on 2026-09-25 by approving the TRL 2 recommendat
 - **LoRaWAN on The Things Network for the pilot** (D3): free and simple; the fair use limit sets the 20 min interval at SF10, and a TTIG-class gateway works only with The Things Stack. A Raspberry Pi gateway with a local ChirpStack server stays a documented later option.
 - **Indoor gateway, antenna on the marker rod** (D2): a sleeve dipole at about 1 m on the rod, fed by a 1.2 m lead, gives 13.5 dB margin at 1 km for $7 a stake. It adds a cable and a snag point; the rod is flexible and flagged.
 - **Default interval 20 min** (D9): fits the fair use limit at SF10; faster with adaptive data rate near the gateway.
-- **Budget read as a pilot set** (D4): the $300 covers three stakes and one gateway.
+- **Budget read as a pilot set** (D4): the USD 300 value-engineering target covers three stakes and one gateway.
 - **Steel slot tool for installation** (RMS-DDR-002): a pointed 32 x 8 mm steel blade, driven with a mallet down the auger hole and withdrawn, pre-cuts the fin path so the fin only widens the slot. Push force falls from 517 N to 376 N in moist loam and from 1,778 N to 1,216 N in firm dry loam (RMS-CAL-001 v0.2). Steel rather than a printed blade, because a printed blade would not survive firm soil.
-- **Cell position kept at 62 mm** (RMS-DDR-002): a deeper cell was checked; the deepest center that fits above the fin spigot (about 65 mm) lowers the peak cell temperature in bare, hot soil only from 46.8 to 46.5 °C, and meeting 40 °C would need about 163 mm, where the upper probe sits.
+- **Cell position kept at 62 mm** (RMS-DDR-002): a deeper cell was checked; in the constructable design the cell already sits as deep as fits above the fin spigot (62 mm, peak 46.8 °C in bare, hot soil), and meeting 40 °C would need about 163 mm, where the upper probe sits.
 
 Still open: first users and region (O1), which also sets EU868 or US915; and the response to the cell temperature in bare, hot soil (RMS-DDR-002, P1). Both proposed, awaiting Amish.
 
