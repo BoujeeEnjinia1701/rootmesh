@@ -3,9 +3,9 @@ doc_id: RMS-DEC-001
 title: RootMesh design decisions register
 project: RootMesh
 doc_type: Design decisions register
-version: "0.1"
+version: "0.2"
 status: Draft
-date: '2026-10-01'
+date: '2026-10-02'
 author: Amish Chadha
 license: CERN-OHL-S-2.0
 revisions:
@@ -13,6 +13,10 @@ revisions:
     date: '2026-10-01'
     author: Amish Chadha
     change: Register opened with the open decisions from the review note and decision records, the design for construction (RMS-DDR-003), items to confirm when parts are bought, and the value-engineering summary
+  - version: "0.2"
+    date: '2026-10-02'
+    author: Amish Chadha
+    change: Amish approved the recommendations for open items 1 to 7 on 2026-10-02 (RMS-DDR-003 accepted, fin printed on a 300 mm class printer, head bonded, R9 cell limit restated on condition, Texas A&M AgriLife Extension on US915 as first candidate, status light, gateway indoors); moved to decisions made
 ---
 
 # RootMesh design decisions register
@@ -21,17 +25,7 @@ Every design decision still to be made, and every decision made, in one place. E
 
 ## Open decisions
 
-| # | Decision needed | Options | Recommendation | Affects in the build | Source |
-| --- | --- | --- | --- | --- | --- |
-| 1 | Accept the design for construction: two-part head with O-ring and screws, board guides, fin in two glued halves with collar and spigot, flush temperature probe, wedge tip and one-piece electrodes, cell holder, gland and vent moved, antenna clips, slot tool handle and stop fixings | Accept as recorded; or change any item | Accept: every change keeps the sensing depths, electrode geometry, cell depth, panel and antenna height | Every component (build plan sections 2 to 4) | RMS-DDR-003, P1 to P11 |
-| 2 | Fin print size: each half is 355 mm long | (a) print on a 300 mm class printer or through a print service; (b) split each half into two lengths with a glued lap joint | (a) | Fin halves (build plan section 3.4) | RMS-DDR-003, A1 |
-| 3 | Head bonded to the tube, so the stake is one piece below the cap | (a) bonded, as modelled; (b) a second O-ring and screws so the head comes off the tube | (a) for the prototype; revisit after a soak test at TRL 4 | Steps 4 and 6 | RMS-DDR-003, A2 |
-| 4 | Response to the cell temperature in bare, hot soil (R9, cell up to about 47 °C) | (A) a printed shade skirt round the head; (B) restate the R9 cell limit to the chosen cell's rated discharge and storage range, with charging still blocked above 45 °C | (B), after confirming the cell's rated range from its datasheet | None in the TRL 3 build; (A) would add a part to the head | RMS-DDR-002, P1 |
-| 5 | First users and region for co-design, which sets EU868 or US915 | Market garden, orchard, university research farm or extension program | None yet (co-design partners to be picked per area later) | Antenna and radio band (build plan section 3.12, safety stop S7) | RMS-DDR-001, O1 |
-| 6 | Status light on the head | Keep a green LED, blinking briefly after each uplink and on a magnet or button wake only, with its charge added to the energy budget; or leave it out | Keep it, once its charge is added to RMS-CAL-001 | Not in the TRL 3 build; would add a lens hole in the body | REVIEW.md, 2026-09-26, item 2 |
-| 7 | Gateway on a post in the hero render | Keep the pilot gateway indoors as decided and treat the post as a render layout only; or show it indoors | Keep it indoors; the post is a render layout | None | REVIEW.md, 2026-09-26, item 3 |
-
-The separate solar cap proposed in the 2026-09-26 review (item 1 there) is now part of decision 1: RMS-DDR-003 adopts a separate cap, sealed by a face O-ring and two screws.
+None. All open decisions were decided on 2026-10-02.
 
 ## To confirm when parts are bought
 
@@ -62,3 +56,10 @@ Value-engineering target: USD 300 (a hypothetical control target, not a limit). 
 | 2026-09-25 | Slot tool for firm soil; deeper cell checked and kept at 62 mm; pilot set includes the slot tool; field calibration note decided but on hold | Amish: "i accept all your recommendations, go with them across all repos." | RMS-DDR-002, A1 to A4 |
 | 2026-09-30 | Build plan format approved for all repos; open decisions go in this register, not in the build plan; the design is made physically buildable as the pictures are drawn | Amish: "this is the correct build plan ... this is a good quality document format. Extend this across all the other repos"; "If you are realising that the design cannot be built as per concept - fix the design assumptions to match and be physically feasible as you draw the illustrations." | RMS-BLD-001, RMS-DDR-003 |
 | 2026-10-01 | The budget is a value-engineering target, not a limit; `budget_usd` stays USD 300 | Amish: "the budgets are a hypothethical control target to ensure we are thinking along a value engineering lens. its ok to ensure wording reflects that the hypothesis budget was x - the real cost being accrued is y" | This register, Value engineering |
+| 2026-10-02 | Design for construction accepted, P1 to P11, as recorded (two-part head with O-ring and screws, which also settles the separate solar cap of the 2026-09-26 review; board guides; fin in two glued halves with collar and spigot; flush temperature probe; wedge tip and one-piece electrodes; cell holder; gland and vent moved; antenna clips; slot tool handle and stop fixings) | Amish: "i approve your recommendations for all 555 open decisions." | RMS-DDR-003, P1 to P11 |
+| 2026-10-02 | Fin print size: option (a), each 355 mm fin half is printed on a 300 mm class printer or through a print service | Amish: "i approve your recommendations for all 555 open decisions." | RMS-DDR-003, A1 |
+| 2026-10-02 | Head joint: option (a) for the prototype, the head is bonded to the tube; revisited after the TRL 4 soak test | Amish: "i approve your recommendations for all 555 open decisions." | RMS-DDR-003, A2 |
+| 2026-10-02 | Cell temperature in bare, hot soil: option (B), R9's cell limit restated to the chosen cell's rated discharge range, with charging still blocked above 45 °C, provided its datasheet rates discharge to 55 °C or more; if it does not, the printed shade skirt round the head (option A) is added | Amish: "i approve your recommendations for all 555 open decisions." | RMS-DDR-002, P1 |
+| 2026-10-02 | First users and region: a US university extension program with a research farm, on US915; first candidate to approach Texas A&M AgriLife Extension | Amish: "i approve your recommendations for all 555 open decisions." | RMS-DDR-001, O1 |
+| 2026-10-02 | Status light: keep a green LED on the head, blinking briefly after each uplink and on a magnet or button wake only, once its charge is added to the energy budget (RMS-CAL-001) | Amish: "i approve your recommendations for all 555 open decisions." | REVIEW.md, 2026-09-26, item 2 |
+| 2026-10-02 | Gateway in the hero render: the pilot gateway stays indoors as decided; the post in the hero render is a layout only, and its caption says so | Amish: "i approve your recommendations for all 555 open decisions." | REVIEW.md, 2026-09-26, item 3 |

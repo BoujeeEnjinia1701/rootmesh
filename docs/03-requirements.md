@@ -3,9 +3,9 @@ doc_id: RMS-REQ-001
 title: RootMesh requirements
 project: RootMesh
 doc_type: Requirements
-version: "0.5"
+version: "0.6"
 status: Draft
-date: '2026-10-01'
+date: '2026-10-02'
 author: Amish Chadha
 license: CERN-OHL-S-2.0
 revisions:
@@ -29,6 +29,10 @@ revisions:
   date: '2026-10-01'
   author: Amish Chadha
   change: Figures for the constructable design (RMS-DDR-003, RMS-CAL-001 v0.3); budget treated as a value-engineering target; no status changed
+- version: "0.6"
+  date: '2026-10-02'
+  author: Amish Chadha
+  change: 'R9 cell limit restated to the chosen cell''s rated discharge range (55 °C or more), charging blocked above 45 °C, as decided by Amish on 2026-10-02'
 ---
 
 # RootMesh requirements
@@ -49,7 +53,7 @@ These requirements reflect Amish's decisions of 2026-09-25 (RMS-DDR-001 and RMS-
 | R6 | Run on sun alone | Energy-neutral with 1 peak sun hour per day on the panel; 90 days or more of reporting with no harvest at all | Energy budget | Met: 19 times daily need at 1 sun hour; 186 days on the cell alone |
 | R7 | Safe cell and charging | LiFePO4 chemistry, 2 Wh or less per stake; charging blocked below 0 °C and above 45 °C cell temperature; cell fused | Design review; charger datasheet | Met by design (1.92 Wh, NTC cut-off, PTC fuse) |
 | R8 | Keep water out | Head IP67; buried section IP68 at 0.5 m for a growing season; UV-stable exposed parts | Design review; later immersion and spray test | Not verifiable at TRL 3; vent membrane added against 15 kPa daily thermal pumping |
-| R9 | Operate across field temperatures | -10 to 60 °C at the head, -5 to 40 °C at the cell | Component datasheets; thermal estimate | **At risk**: head about 64 °C and cell up to about 47 °C in bare, hot soil (parts rated 85 °C); a deeper cell that fits gives 46.5 °C, so the response is proposed (RMS-DDR-002, P1) |
+| R9 | Operate across field temperatures | -10 to 60 °C at the head; at the cell, the chosen cell's rated discharge range, which its datasheet must rate to 55 °C or more, with charging blocked above 45 °C (restated from -5 to 40 °C by Amish, 2026-10-02; if the cell is not rated to 55 °C, a printed shade skirt round the head is added) | Component datasheets; thermal estimate | **At risk**: head about 64 °C and cell up to about 47 °C in bare, hot soil (parts rated 85 °C); within a 55 °C rated discharge range once the datasheet confirms it (RMS-DEC-001); the head stays over its 60 °C |
 | R10 | Install and remove by hand | One person with a 50 mm hand auger and the slot tool (RMS-DDR-002) installs a stake in 15 min or less, with sensing depths repeatable to ±25 mm; removal by hand in 5 min or less | Push-force estimate; later timed trial | **At risk**: with the slot tool about 386 N in moist loam (within one person's 500 N), about 1.2 kN in firm dry loam (without the tool 526 N and 1.8 kN); auger hole 110 mm deep (RMS-DDR-003) |
 | R11 | Survive field operations | Rigid head 300 mm or less above grade; anything higher, including the antenna (RMS-DDR-001, D2), carried on the flexible marker rod; high-visibility marker 1 m or more above grade | Model check | Met: head 171 mm; rod top 1,000 mm; antenna 914 to 1,086 mm on the rod |
 | R12 | Affordable | One stake $60 or less in parts; pilot set of three stakes, one gateway and the installation slot tool $300 or less, which is how the $300 value-engineering target is read (RMS-DDR-001, D4) | Priced BOM (`bom/bom.csv`) | Met: $59.00 per stake; $281.00 per pilot set including the slot tool, USD 19 under the value-engineering target (indicative, RMS-DDR-003) |

@@ -8,6 +8,8 @@ Solar-powered stakes that measure soil moisture, temperature and EC and report o
 
 ![RootMesh: solar soil-sensor stakes with a LoRaWAN gateway, product render](media/render-hero.png)
 
+*The gateway on a post in this render is a layout only; the pilot gateway is indoors.*
+
 [Exploded render](media/render-exploded.png) · [Detail render](media/render-detail.png) · [Interactive 3D model](media/viewer.html) · [Concept blueprint (PDF)](media/concept-blueprint.pdf) · [General arrangement RMS-DWG-001 (PDF)](cad/drawings/RMS-DWG-001.pdf) · [Sizing calculations](docs/04-calcs/01-sizing.md) · [Prototype build plan](docs/05-build-plan.md) · [Design decisions](docs/06-design-decisions.md) · [Review note](docs/REVIEW.md)
 
 ## Concept rationale

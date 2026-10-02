@@ -3,9 +3,9 @@ doc_id: RMS-CAL-001
 title: RootMesh sizing calculations
 project: RootMesh
 doc_type: Calculation
-version: "0.3"
+version: "0.4"
 status: Draft
-date: '2026-10-01'
+date: '2026-10-02'
 author: Amish Chadha
 license: CERN-OHL-S-2.0
 revisions:
@@ -21,6 +21,10 @@ revisions:
   date: '2026-10-01'
   author: Amish Chadha
   change: Re-run for the constructable design (RMS-DDR-003); push depth, head air volume, cell depth check and cost updated; budget treated as a value-engineering target
+- version: "0.4"
+  date: '2026-10-02'
+  author: Amish Chadha
+  change: R9 target in the requirement table restated as decided by Amish on 2026-10-02; no number re-run
 ---
 
 # RootMesh sizing calculations
@@ -151,7 +155,7 @@ From `bom/bom.csv`, one stake costs $59.00, three cost $177.00, and with the $90
 | --- | --- | --- | --- |
 | R1 | Depths 150 and 300 mm by model; accuracy unverified | 150 and 300 mm (±25 mm); ±3 % VWC after site calibration | At risk |
 | R5 | 13.5 dB margin at 1 km; tall crops take 13 to 19 dB | 90 % of uplinks at 1 km, indoor gateway, antenna on the marker rod | At risk |
-| R9 | Head about 64 °C at 45 °C air; cell up to 47 °C in bare hot soil; the cell already sits as deep as fits (62 mm) | -10 to 60 °C at the head; -5 to 40 °C at the cell | At risk |
+| R9 | Head about 64 °C at 45 °C air; cell up to 47 °C in bare hot soil; the cell already sits as deep as fits (62 mm) | -10 to 60 °C at the head; the cell's rated discharge range, 55 °C or more, charging blocked above 45 °C (restated 2026-10-02) | At risk (head) |
 | R10 | With the slot tool 386 N in moist loam, 1,245 N in firm dry loam (without: 526 N, 1,807 N) | One person, 50 mm auger, 15 min; depths ±25 mm | At risk |
 | R14 | Sealed probes, 316 stainless electrodes; life unverified | 12 months buried | At risk |
 | R8 | 15 kPa daily thermal pumping without a vent; vent added | Head IP67; buried IP68 at 0.5 m; UV-stable | Not verifiable at TRL 3 |

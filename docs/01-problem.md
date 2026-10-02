@@ -3,9 +3,9 @@ doc_id: RMS-PRB-001
 title: RootMesh problem statement
 project: RootMesh
 doc_type: Problem statement
-version: "0.3"
+version: "0.4"
 status: Draft
-date: '2026-09-25'
+date: '2026-10-02'
 author: Amish Chadha
 license: CERN-OHL-S-2.0
 revisions:
@@ -21,6 +21,10 @@ revisions:
   date: '2026-09-25'
   author: Amish Chadha
   change: Record Amish's decisions (RMS-DDR-001) on the budget reading, power and network; update open questions
+- version: "0.4"
+  date: '2026-10-02'
+  author: Amish Chadha
+  change: First users and region (US915; Texas A&M AgriLife Extension as first candidate), as decided by Amish on 2026-10-02
 ---
 
 # RootMesh problem statement
@@ -86,7 +90,7 @@ RootMesh aims to close all three: a stake built from low-cost parts but designed
 
 ## Open questions
 
-- Which first users and region: a market garden, an orchard, a university research farm or an extension program? This also sets EU868 or US915. Proposed, awaiting Amish (co-design partners to be picked per area later).
+- Which first users and region: a market garden, an orchard, a university research farm or an extension program? This also sets EU868 or US915. Decided by Amish on 2026-10-02: a US university extension program with a research farm, on US915, with Texas A&M AgriLife Extension as the first candidate to approach (RMS-DEC-001).
 - Is one indoor gateway enough for the fields of the first users? With the antenna on the marker rod the link closes at 1 km on paper (RMS-CAL-001), but tall crops such as maize or orchard rows may need an outdoor gateway.
 - Do growers want a simple "irrigate now" signal, a depletion chart, or both?
 - How often must stakes come out for tillage or harvest, and how quickly must they go back in?

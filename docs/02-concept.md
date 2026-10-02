@@ -3,9 +3,9 @@ doc_id: RMS-PRC-001
 title: RootMesh design precis
 project: RootMesh
 doc_type: Design precis
-version: "0.5"
+version: "0.6"
 status: Draft
-date: '2026-10-01'
+date: '2026-10-02'
 author: Amish Chadha
 license: CERN-OHL-S-2.0
 revisions:
@@ -29,6 +29,10 @@ revisions:
   date: '2026-10-01'
   author: Amish Chadha
   change: Constructable design (RMS-DDR-003) and build plan RMS-BLD-001; costs and installation figures updated; budget treated as a value-engineering target
+- version: "0.6"
+  date: '2026-10-02'
+  author: Amish Chadha
+  change: 'Decisions of 2026-10-02 (RMS-DEC-001): first users on US915 (Texas A&M AgriLife Extension as first candidate), R9 cell limit restated on condition, status light kept'
 ---
 
 # RootMesh design precis
@@ -164,7 +168,7 @@ Amish decided the choices below on 2026-09-25 by approving the TRL 2 recommendat
 - **Steel slot tool for installation** (RMS-DDR-002): a pointed 32 x 8 mm steel blade, driven with a mallet down the auger hole and withdrawn, pre-cuts the fin path so the fin only widens the slot. Push force falls from 517 N to 376 N in moist loam and from 1,778 N to 1,216 N in firm dry loam (RMS-CAL-001 v0.2). Steel rather than a printed blade, because a printed blade would not survive firm soil.
 - **Cell position kept at 62 mm** (RMS-DDR-002): a deeper cell was checked; in the constructable design the cell already sits as deep as fits above the fin spigot (62 mm, peak 46.8 °C in bare, hot soil), and meeting 40 °C would need about 163 mm, where the upper probe sits.
 
-Still open: first users and region (O1), which also sets EU868 or US915; and the response to the cell temperature in bare, hot soil (RMS-DDR-002, P1). Both proposed, awaiting Amish.
+Decided by Amish on 2026-10-02 (RMS-DEC-001): the first users are a US university extension program with a research farm, on US915, with Texas A&M AgriLife Extension as the first candidate to approach; the cell limit of R9 is restated to the chosen cell's rated discharge range, provided its datasheet rates discharge to 55 °C or more, with charging still blocked above 45 °C, and otherwise a printed shade skirt is added; a green status light is kept on the head, blinking briefly after each uplink and on a magnet or button wake only, once its charge is in the energy budget. The link and power figures above are for EU868 and are to be redone for US915.
 
 ## Safety
 
@@ -182,10 +186,10 @@ Still open: first users and region (O1), which also sets EU868 or US915; and the
 
 ## Open questions after TRL 3
 
-- First users and region for co-design, and so EU868 or US915 (O1). Proposed, awaiting Amish.
+- First users and region for co-design: decided on 2026-10-02, a US university extension program on US915, first candidate Texas A&M AgriLife Extension. The link budget and airtime for US915 are still to be worked.
 - Can the moisture calibration reach ±3 % VWC in two soils (R1)? Needs a gravimetric calibration at TRL 4.
 - Does the link hold through tall crops at 1 km (R5)? Needs a range walk at TRL 4.
-- A deeper cell cannot keep the cell under 40 °C in bare, hot soil (R9). Shade the soil around the head, or restate the cell limit to the chosen cell's rated discharge range? Proposed, awaiting Amish (RMS-DDR-002, P1).
+- A deeper cell cannot keep the cell under 40 °C in bare, hot soil (R9). Decided on 2026-10-02: the cell limit is restated to the chosen cell's rated discharge range if its datasheet rates discharge to 55 °C or more; otherwise the soil around the head is shaded with a printed skirt.
 - The slot tool brings moist soil within one person's strength on paper, but not firm dry soil (R10). A timed installation trial is TRL 4 work, on hold.
 - Which edge seal lets the hobby probes last 12 months buried (R14)?
 

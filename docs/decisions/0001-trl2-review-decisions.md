@@ -3,9 +3,9 @@ doc_id: RMS-DDR-001
 title: RootMesh TRL 2 review decisions
 project: RootMesh
 doc_type: Design decision record
-version: "0.1"
+version: "0.2"
 status: Draft
-date: '2026-09-25'
+date: '2026-10-02'
 author: Amish Chadha
 license: CERN-OHL-S-2.0
 revisions:
@@ -13,12 +13,16 @@ revisions:
   date: '2026-09-25'
   author: Amish Chadha
   change: Record Amish's decisions on the TRL 2 review items and the item that remains open
+- version: "0.2"
+  date: '2026-10-02'
+  author: Amish Chadha
+  change: O1 decided by Amish on 2026-10-02 as recommended (Texas A&M AgriLife Extension on US915 as first candidate)
 ---
 
 # 0001: TRL 2 review decisions
 
 - **Date:** 2026-09-25
-- **Status:** accepted for items D1 to D9; item O1 remains proposed
+- **Status:** accepted for items D1 to D9; item O1 decided on 2026-10-02 as recommended (Amish, 2026-10-02: "i approve your recommendations for all 555 open decisions.")
 
 ## Context
 
@@ -48,7 +52,7 @@ The options for each item are those listed in `docs/REVIEW.md` (session 2026-09-
 
 | # | Item | Status |
 | --- | --- | --- |
-| O1 | First users and region for co-design: a market garden, an orchard, a university research farm or an extension program. This also settles EU868 or US915. | Proposed, awaiting Amish (co-design partners to be picked per area later, as Amish directed for community designs) |
+| O1 | First users and region for co-design: a market garden, an orchard, a university research farm or an extension program. This also settles EU868 or US915. | Decided by Amish on 2026-10-02 as recommended in RMS-DEC-001: a US university extension program with a research farm, on US915, with Texas A&M AgriLife Extension as the first candidate to approach |
 
 ## Consequences
 

@@ -272,3 +272,45 @@ The build plan carries eight safety stops (cell, charging, slot tool, radio, fie
 ### Recommended next step
 
 Review RMS-DDR-003 and the register. TRL 4 (building to this plan) stays on hold until Amish lifts the cap.
+
+## Session 2026-10-02: open decisions decided
+
+Amish, 2026-10-02: "i approve your recommendations for all 555 open decisions." This approves the recommendation written for each open decision in the design decisions register (RMS-DEC-001 v0.1). trl stays 3; no build or test work was done, and the model, BOM quantities and prices, and pictures are unchanged.
+
+### Decisions recorded
+
+Seven decisions, all moved to Decisions made in RMS-DEC-001, dated 2026-10-02:
+
+1. RMS-DDR-003 accepted: design for construction P1 to P11, as recorded (including the separate solar cap).
+2. Fin print size: option (a), a 300 mm class printer or a print service.
+3. Head joint: option (a), bonded to the tube for the prototype; revisited after the TRL 4 soak test.
+4. Cell temperature (R9): option (B), the cell limit restated to the chosen cell's rated discharge range, with charging still blocked above 45 °C, provided its datasheet rates discharge to 55 °C or more; otherwise the printed shade skirt (A) is added.
+5. First users and region: a US university extension program with a research farm, on US915; Texas A&M AgriLife Extension is the first candidate to approach.
+6. Status light: a green LED on the head, blinking briefly after each uplink and on a magnet or button wake only, once its charge is in the energy budget.
+7. Gateway: indoors as decided; the post in the hero render is a layout only, and its caption says so.
+
+### Documents changed
+
+- `docs/06-design-decisions.md` (RMS-DEC-001 v0.2): open decisions moved to Decisions made; the note on the separate solar cap folded into decision 1.
+- `docs/decisions/0003-design-for-construction.md` (RMS-DDR-003 v0.2, status Draft): accepted, with A1 and A2 accepted as recommended.
+- `docs/decisions/0001-trl2-review-decisions.md` (RMS-DDR-001 v0.2): O1 recorded as decided.
+- `docs/decisions/0002-recommendations-accepted.md` (RMS-DDR-002 v0.2): O1 and P1 recorded as decided.
+- `docs/03-requirements.md` (RMS-REQ-001 v0.6): R9 cell limit restated (still at risk for the head).
+- `docs/04-calcs/01-sizing.md` (RMS-CAL-001 v0.4): R9 target in the requirement table; no number re-run.
+- `docs/02-concept.md` (RMS-PRC-001 v0.6): decisions on first users, US915, R9 and the status light; open questions answered.
+- `docs/01-problem.md` (RMS-PRB-001 v0.4): first users and region.
+- `README.md`: caption under the hero render (the post is a layout only).
+
+### Follow-up actions to carry approved decisions into the design
+
+1. Decision 4 (calculations and BOM): choose the cell, confirm from its datasheet that discharge is rated to 55 °C or more, and record it in the BOM notes; if it is not, add the printed shade skirt to the model, BOM, drawings and build plan pictures.
+2. Decision 5 (calculations): redo the link budget, airtime and fair use figures of RMS-CAL-001 and RMS-PRC-001 for US915 (915 MHz, US power limits, 400 ms dwell time).
+3. Decision 5 (model and BOM): cut the sleeve dipole for 915 MHz and specify the US915 gateway and antenna in the BOM (build plan section 3.12 and safety stop S7).
+4. Decision 6 (calculations, model, BOM): add the LED's charge to the energy budget in RMS-CAL-001, then add the lens hole in the head body, the LED and its resistor to the model and BOM.
+5. Decision 7 (pictures): put the "layout only" note in the hero render's own caption when the renders are next made (`.kit/photo_caption.py`).
+6. Decision 1 (pictures): update `cad/src/product_model.py` to the constructable head, fin and antenna clip and re-render the photoreal renders, card and social preview on Amish's Mac.
+
+### Points found in the review
+
+- R9 also sets 60 °C at the head, which the head exceeds (about 64 °C at 45 °C air); neither option in decision 4 addresses it, and it was not an open item. R9 stays at risk for the head.
+- Charging is blocked above 45 °C cell temperature, which in bare hot soil falls in the sunniest afternoon hours; the energy budget should show the solar charge still covers the load.

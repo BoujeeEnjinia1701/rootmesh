@@ -3,9 +3,9 @@ doc_id: RMS-DDR-003
 title: RootMesh design for construction
 project: RootMesh
 doc_type: Design decision record
-version: "0.1"
+version: "0.2"
 status: Draft
-date: '2026-10-01'
+date: '2026-10-02'
 author: Amish Chadha
 license: CERN-OHL-S-2.0
 revisions:
@@ -13,12 +13,16 @@ revisions:
   date: '2026-10-01'
   author: Amish Chadha
   change: Changes that make the concept physically buildable, with the reason for each; made under Amish's 2026-09-30 instruction to make the design physically buildable; open for his review
+- version: "0.2"
+  date: '2026-10-02'
+  author: Amish Chadha
+  change: Accepted by Amish on 2026-10-02, including the recommendations for A1 and A2
 ---
 
 # 0003: Design for construction
 
 - **Date:** 2026-10-01
-- **Status:** Draft. Made under Amish's 2026-09-30 instruction to make the design physically buildable; open for his review. The two items in Table 3 are proposed, awaiting Amish.
+- **Status:** accepted. Amish, 2026-10-02: "i approve your recommendations for all 555 open decisions." This covers every change in Tables 1 and 2 and the recommendations in Table 3 (A1 and A2), which are now decided as recommended and recorded in the design decisions register (RMS-DEC-001).
 
 ## Context
 
@@ -55,17 +59,17 @@ The changes keep what the stake does: the same sensing depths (150 mm and 300 mm
 | Sealing (R8) | Head air 272 cm³ (was 308 cm³); pressure rise unchanged at 15.1 kPa [F3]. A second seal (the cap's O-ring) is added. Status unchanged: not verifiable at TRL 3. | Thicker body wall. |
 | Documents | RMS-CAL-001 v0.3, RMS-REQ-001 v0.5, RMS-PRC-001 v0.5; RMS-DWG-001 Rev P4; making sketches RMS-DWG-101 to 110; build plan RMS-BLD-001 and register RMS-DEC-001 added. No requirement changed status. | Follows the model. |
 
-*Table 3. Proposed, awaiting Amish.*
+*Table 3. Proposed, then accepted by Amish as recommended on 2026-10-02.*
 
 | # | Question | Options | Recommendation |
 | --- | --- | --- | --- |
-| A1 | Each fin half is 355 mm long with its collar and spigot. It fits a 300 x 300 mm print bed laid diagonally, but not the common 220 or 256 mm beds. | (a) print on a 300 mm class printer or through a print service; (b) split each half into two lengths with a glued lap joint between the windows. | (a): a joint between the windows would add a seam across the wire channels and the temperature probe. |
-| A2 | The tube is now bonded into the head body and onto the fin, so the stake is one permanent piece below the cap. The cell and board are reached through the cap; the fin cannot be separated from the head for repair. | (a) bonded, as modelled; (b) a second O-ring and two screws at the head socket, so the head comes off the tube. | (a) for the prototype: fewer seals in the ground, and the cell is still reachable. Revisit after a soak test at TRL 4. |
+| A1 | Each fin half is 355 mm long with its collar and spigot. It fits a 300 x 300 mm print bed laid diagonally, but not the common 220 or 256 mm beds. | (a) print on a 300 mm class printer or through a print service; (b) split each half into two lengths with a glued lap joint between the windows. | (a): a joint between the windows would add a seam across the wire channels and the temperature probe. Accepted 2026-10-02. |
+| A2 | The tube is now bonded into the head body and onto the fin, so the stake is one permanent piece below the cap. The cell and board are reached through the cap; the fin cannot be separated from the head for repair. | (a) bonded, as modelled; (b) a second O-ring and two screws at the head socket, so the head comes off the tube. | (a) for the prototype: fewer seals in the ground, and the cell is still reachable. Revisit after a soak test at TRL 4. Accepted 2026-10-02. |
 
 ## Consequences
 
 - `design_state: constructable` in `project.yaml`. The build plan RMS-BLD-001 shows every component and step in pictures generated from the model (`cad/src/build_plan_media.py`).
 - Requirement status is unchanged: 8 met, 5 at risk (R1, R5, R9, R10, R14), 1 not verifiable at TRL 3 (R8), none not met (RMS-CAL-001 v0.3).
-- The open item from the 2026-09-26 appearance review on a separate solar cap is answered by P1 in this record, which stays open for Amish's review with the rest of it.
+- The open item from the 2026-09-26 appearance review on a separate solar cap is answered by P1 in this record, accepted with the rest of it by Amish on 2026-10-02.
 - The photoreal renders (`media/render-*.png`), `media/card.png`, `media/social-preview.png` and the appearance model `cad/src/product_model.py` still show the concept head, fin and antenna clip; they need updating on Amish's Mac, where Blender is.
 - The probe boards, temperature probe, cell, O-ring, gland, inserts and PVC pipe are chosen at TRL 4; the sizes in the register's "to confirm" list must be checked against the parts bought, and the slots, pockets, bores and holes moved to suit.

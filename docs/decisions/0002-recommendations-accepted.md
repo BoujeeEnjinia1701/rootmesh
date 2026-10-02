@@ -3,9 +3,9 @@ doc_id: RMS-DDR-002
 title: RootMesh recommendations accepted
 project: RootMesh
 doc_type: Design decision record
-version: "0.1"
+version: "0.2"
 status: Draft
-date: '2026-09-25'
+date: '2026-10-02'
 author: Amish Chadha
 license: CERN-OHL-S-2.0
 revisions:
@@ -13,12 +13,16 @@ revisions:
   date: '2026-09-25'
   author: Amish Chadha
   change: Record Amish's acceptance of the remaining review recommendations and what changed in the repo
+- version: "0.2"
+  date: '2026-10-02'
+  author: Amish Chadha
+  change: O1 and P1 decided by Amish on 2026-10-02 as recommended
 ---
 
 # 0002: Recommendations accepted
 
 - **Date:** 2026-09-25
-- **Status:** accepted for items A1 to A4; items O1 and P1 remain proposed
+- **Status:** accepted for items A1 to A4; items O1 and P1 decided on 2026-10-02 as recommended (Amish, 2026-10-02: "i approve your recommendations for all 555 open decisions.")
 
 ## Context
 
@@ -39,8 +43,8 @@ On 2026-09-25 Amish wrote, in chat: "i accept all your recommendations, go with 
 
 | # | Item | Status |
 | --- | --- | --- |
-| O1 | First users and region for co-design (market garden, orchard, research farm or extension program), which also sets EU868 or US915. No recommendation was made. | Proposed, awaiting Amish |
-| P1 | Response to the cell temperature in bare, hot soil (R9), raised by the check in A2. Option A: a printed shade skirt around the head to shade the soil over the cell (adds a part near machinery; its effect needs measuring). Option B: restate the R9 cell limit to the chosen cell's rated discharge and storage range, taken from its datasheet, while charging stays blocked above 45 °C. Recommendation: B, because the charger already blocks charging in the hot hours and B adds no part; confirm the cell's rated range before adopting it. This is a new proposal made after Amish's acceptance, so it is not decided. | Proposed, awaiting Amish |
+| O1 | First users and region for co-design (market garden, orchard, research farm or extension program), which also sets EU868 or US915. No recommendation was made. | Decided by Amish on 2026-10-02 as recommended in RMS-DEC-001: a US university extension program with a research farm, on US915, with Texas A&M AgriLife Extension as the first candidate to approach |
+| P1 | Response to the cell temperature in bare, hot soil (R9), raised by the check in A2. Option A: a printed shade skirt around the head to shade the soil over the cell (adds a part near machinery; its effect needs measuring). Option B: restate the R9 cell limit to the chosen cell's rated discharge and storage range, taken from its datasheet, while charging stays blocked above 45 °C. Recommendation: B, because the charger already blocks charging in the hot hours and B adds no part; confirm the cell's rated range before adopting it. This was a new proposal made after Amish's acceptance. | Decided by Amish on 2026-10-02 as recommended in RMS-DEC-001: option B, provided the cell's datasheet rates discharge to 55 °C or more; otherwise option A, the shade skirt |
 
 ## Consequences
 
