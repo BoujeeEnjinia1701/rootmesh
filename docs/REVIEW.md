@@ -314,3 +314,40 @@ Seven decisions, all moved to Decisions made in RMS-DEC-001, dated 2026-10-02:
 
 - R9 also sets 60 °C at the head, which the head exceeds (about 64 °C at 45 °C air); neither option in decision 4 addresses it, and it was not an open item. R9 stays at risk for the head.
 - Charging is blocked above 45 °C cell temperature, which in bare hot soil falls in the sunniest afternoon hours; the energy budget should show the solar charge still covers the load.
+
+## Session 2026-10-02: approved follow-ups carried out
+
+Amish, 2026-10-02: every follow-up action from the open-decision sign-off is approved and to be completed. trl stays 3; no build or test work was done. `budget_usd` is unchanged.
+
+### Approved follow-ups carried out
+
+1. Decision 4, cell: done. The cell is an IFR14500EC class LiFePO4 cell (600 mAh, 3.2 V). Its datasheet ([Simpower IFR14500EC](https://www.simpower.co.nz/wp-content/uploads/2021/11/IFR14500EC.pdf)) rates discharge from -20 to +60 °C and charge from 0 to +60 °C, so the 55 °C condition is met and the printed shade skirt is not added. BOM line 5 and the build plan record it; the charger still blocks charging above 45 °C. The datasheet is for the class, not for a purchased lot: check the supplier's own sheet before buying.
+2. Decision 5, US915 calculations: done. RMS-CAL-001 v0.5 and RMS-PRC-001 v0.7 redo airtime (400 ms dwell limit, SF10 takes 371 ms), the link budget (915 MHz, 20 dBm radiated, margin at 1 km 19.5 dB) and the energy budget.
+3. Decision 5, dipole and gateway: done. The model's dipole is 164 mm (was 172 mm); BOM line 4 is a 915 MHz dipole and line 13 the US915 gateway; build plan section 3.12 and stop S7 say so.
+4. Decision 6, status LED: done. Charge added to the energy budget (RMS-CAL-001 [B1b]: 2.14 mA, 0.21 mAs per report, 3.2 mAs a day of wake blinks, five wakes a day assumed), then a 5.2 mm lens hole, the LED and its 560 Ω resistor added to the model (388 checks pass, 0 failures), BOM line 17 ($0.15 a stake), the build plan and the wiring picture.
+5. Decision 7, hero caption: done in the render scene. The hero view's note now says the post is a layout only and the pilot gateway sits indoors; it travels in `rootmesh__jobs.json` to `.kit/photo_caption.py`.
+6. Decision 1, appearance model and renders: the appearance model `cad/src/product_model.py` is updated to the constructable head (lens hole, gland and vent at the model positions), the fin collar and spigot, the cell holder, the two antenna clips, the cable tie heights and the 915 MHz dipole, with the dimensions read from `cad/src/model.py`. Render scenes exported to `/home/claude/renders/rootmesh` (hero, exploded, detail). Not done: the photoreal renders, `media/card.png` and `media/social-preview.png`, which are made on Amish's Mac next.
+
+### Results
+
+- Model: 388 constructability checks, 0 failures; STEP and STL regenerated.
+- BOM: line 17 added; lines 3, 4, 5 and 13 reworded for US915 and the chosen cell; no other line changed. One stake $59.15, pilot set $281.45. Value-engineering target: USD 300. Estimated cost of the constructable design: USD 281.45 (USD 18.55 under the target). Mass is not tracked in the bill of materials.
+- Requirement status changes: none (8 met, 5 at risk: R1, R5, R9, R10, R14; 1 not verifiable at TRL 3: R8). R5 margin rose to 19.5 dB but tall crops still take it down to 0.1 dB at 100 m of crop, so it stays at risk. R9 stays at risk because the head reaches about 64 °C against its 60 °C limit.
+- Pictures regenerated: RMS-DWG-001 Rev P5, RMS-DWG-106 Rev P2 (lens hole), the other making sketches, concept media (hero, exploded, cutaway, blueprint, viewer), overview, joints 1 to 11, steps 1 to 16, wiring. `drawing.py --check-text` reports nothing.
+
+### Documents changed
+
+RMS-BLD-001 v0.2, RMS-CAL-001 v0.5, RMS-REQ-001 v0.7, RMS-PRC-001 v0.7, RMS-DEC-001 v0.3, with `README.md`, `bom/bom.csv`, `bom/bom-notes.md`, `cad/src/model.py`, `cad/src/product_model.py`, `cad/src/sheets.py`, `cad/src/build_plan_media.py`, `cad/src/concept_media.py` and `docs/04-calcs/sizing.py`. PDFs regenerated.
+
+### Points found
+
+- The 20 dBm radiated power is the module's practical limit (+22 dBm conducted less 1.6 dB of coax), not a regulatory figure; the US915 rules allow more. Proposed, awaiting Amish: none needed, but the energy budget already assumed the 22 dBm transmit current.
+- The LED position (front right, 60 mm up) and the five wakes a day are my choices; both are easy to move.
+
+### Cross-repo actions
+
+- None for this repository's own follow-ups. Outreach to Texas A&M AgriLife Extension (decision 5) is Amish's and nothing is agreed.
+
+## 2026-10-02: photoreal renders redone on the constructable design
+
+Rendered with Blender Cycles on Amish's Mac from the updated appearance model; captioned with `.kit/photo_caption.py`; `media/card.png` and `media/social-preview.png` regenerated with `.kit/cards.py`. Views: hero, exploded, detail. image_qc passes. Appearance deviations are those logged above as proposed, awaiting Amish.

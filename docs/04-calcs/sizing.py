@@ -1,4 +1,4 @@
-"""RootMesh sizing calculations (RMS-CAL-001 v0.2), TRL 3.
+"""RootMesh sizing calculations (RMS-CAL-001 v0.5), TRL 3. US915 and status LED added 2026-10-02.
 
 Run from the repo root:  python docs/04-calcs/sizing.py
 Prints every number that RMS-CAL-001 (docs/04-calcs/01-sizing.md) quotes, tagged [A1], [B3] and
@@ -54,11 +54,15 @@ for sf in (7, 8, 9, 10, 11, 12):
     out(f"A2-SF{sf}", f"SF{sf}: time on air {t * 1000:.0f} ms; {per_day:.0f} uplinks at {INTERVAL:.0f} min = {t * per_day:.1f} s/day; "
                       f"at 15 min {t * 96:.1f} s/day; shortest interval within {FUP:.0f} s/day = {min_int:.1f} min")
 t10 = toa(10)
-out("A3", f"EU868 1 % duty cycle: after a {t10:.3f} s SF10 uplink the sub-band is closed for {t10 * 99:.0f} s, "
-          f"far below the {INTERVAL * 60:.0f} s interval")
+DWELL = 0.400   # s, US915 maximum dwell time per channel (FCC Part 15.247 hopping rules, LoRaWAN US915)
+out("A3", f"US915 dwell limit: SF10 at 125 kHz takes {t10 * 1000:.0f} ms, under the {DWELL * 1000:.0f} ms limit per channel "
+          f"({DWELL - t10:.3f} s to spare); SF11 and SF12 at 125 kHz ({toa(11) * 1000:.0f} and {toa(12) * 1000:.0f} ms) are not allowed, "
+          f"so DR0 (SF10) is the slowest rate; there is no duty-cycle limit, only fair use")
+assert t10 < DWELL
 air10 = t10 * per_day
 req("R4", f"{air10:.1f} s/day at SF10, 20 min; 15 min needs SF9 or faster ({toa(9) * 96:.1f} s/day)",
     "20 min default; 30 s/day or less at SF10; 10 to 60 min where the SF allows", "Met")
+req_note = f"US915 dwell {t10 * 1000:.0f} ms against 400 ms"
 
 # ---------------------------------------------------------------- B. Energy (R6, R7)
 print("\nB. Energy")
@@ -68,14 +72,21 @@ I_RX, T_RX = 6.7, 0.2            # two receive windows, about 0.1 s each at SF10
 I_SENS, T_SENS = 12.0, 1.0       # two TLC555 probes, DS18B20, dividers
 I_MCU, T_MCU = 4.0, 1.5          # STM32WL core active
 I_EC, T_EC = 10.0, 0.02          # EC burst, 5 kHz square wave through about 330 ohm
+V_SUP, V_LED = 3.3, 2.1          # V: supply, green LED forward voltage
+R_LED = 560.0                    # ohm, series resistor (BOM 17)
+I_LED = (V_SUP - V_LED) / R_LED * 1000   # mA when lit
+T_LED, FLASHES, WAKES = 0.1, 3, 5        # s per flash; flashes per wake; magnet or button wakes per day (assumed)
 I_SLEEP = 10e-3                  # mA, whole board incl. charger and dividers (module 2.1 uA)
 MARGIN = 1.30
 CELL_MAH, CELL_V, DOD = 600.0, 3.2, 0.80
 SELF_DIS = 0.03                  # per month, LiFePO4 with protection
-charge = {"sensors": I_SENS * T_SENS, "mcu": I_MCU * T_MCU, "tx": I_TX * T_TX, "rx": I_RX * T_RX, "ec": I_EC * T_EC}
+charge = {"sensors": I_SENS * T_SENS, "mcu": I_MCU * T_MCU, "tx": I_TX * T_TX, "rx": I_RX * T_RX, "ec": I_EC * T_EC, "led": I_LED * T_LED}
 q_rep = sum(charge.values())
 out("B1", "charge per report " + " + ".join(f"{k} {v:.1f}" for k, v in charge.items()) + f" = {q_rep:.1f} mAs")
-active = q_rep * per_day / 3600
+out("B1b", f"status LED: {V_SUP:.1f} V, {V_LED:.1f} V forward, {R_LED:.0f} ohm gives {I_LED:.2f} mA; one {T_LED * 1000:.0f} ms blink per uplink = "
+           f"{I_LED * T_LED:.2f} mAs; {FLASHES} blinks per wake x {WAKES} wakes per day (assumed) = {I_LED * T_LED * FLASHES * WAKES:.2f} mAs per day")
+q_wake = I_LED * T_LED * FLASHES * WAKES                    # mAs per day, magnet or button wakes only
+active = (q_rep * per_day + q_wake) / 3600
 sleep = I_SLEEP * 24
 use = (active + sleep) * MARGIN
 selfd = CELL_MAH * SELF_DIS / 30
@@ -101,15 +112,19 @@ req("R7", f"LiFePO4, {wh:.2f} Wh, NTC 0 to 45 C, PTC fuse", "LiFePO4, 2 Wh or le
 
 # ---------------------------------------------------------------- C. Radio link (R5)
 print("\nC. Radio link")
-F = 868e6
+F = 915e6        # US915 (decided 2026-10-02); the 868 MHz EU plan was the earlier basis
 LAM = 3e8 / F
-P_RAD = 14.0         # dBm radiated (EU868 limit 14 dBm ERP); conducted power raised to cover the coax
-COAX = 1.2 * 1.0 + 0.3   # dB: 1.2 m RG174 at about 1.0 dB/m, plus connectors
+P_RAD = 20.0         # dBm radiated; module maximum +22 dBm conducted less coax loss, well inside the US915 limit (30 dBm EIRP in LoRaWAN US915)
+COAX = 1.2 * 1.05 + 0.3  # dB: 1.2 m RG174 at about 1.05 dB/m at 915 MHz, plus connectors
 G_ANT = 0.0          # dBi, sleeve dipole taken at 0 dBi (a half-wave dipole is about 2 dBi)
 SENS = -132.0        # dBm, gateway at SF10, 125 kHz
 WALL = 12.0          # dB, farmhouse wall and window
 FADE = 10.0          # dB, allowance for crop foliage and fading
 H_GW = 3.0
+HALF = LAM / 2 * 1000
+out("C0", f"half-wave at {F / 1e6:.0f} MHz: {HALF:.1f} mm in free space; the model's sleeve dipole is {P['ant_len']:.0f} mm "
+          f"(was 172 mm at 868 MHz)")
+assert abs(HALF - P["ant_len"]) < 1.5
 out("C1", f"conducted power {P_RAD + COAX - G_ANT:.1f} dBm to radiate {P_RAD:.0f} dBm through {COAX:.1f} dB of coax "
           f"(module maximum +22 dBm)")
 
@@ -147,8 +162,8 @@ for dep in (20, 50, 100):
     out(f"C4-{dep}", f"Weissberger foliage loss through {dep} m of crop taller than the antenna: {weissberger(dep):.1f} dB")
 d10 = next(dd for dd in range(15, 200) if weissberger(dd) >= FADE)
 out("C5", f"tall crop depth that uses up the {FADE:.0f} dB allowance: about {d10} m")
-req("R5", f"{m_dec:.1f} dB margin at 1 km (after 10 dB fade allowance); tall crops add {weissberger(50):.0f} to "
-          f"{weissberger(100):.0f} dB", "90 % of uplinks at 1 km, indoor gateway, antenna on marker rod", "At risk")
+req("R5", f"{m_dec:.1f} dB margin at 1 km on US915 (after 10 dB fade allowance); tall crops add {weissberger(50):.0f} to "
+          f"{weissberger(100):.0f} dB, leaving {m_dec - weissberger(100):.1f} dB at 100 m of crop", "90 % of uplinks at 1 km, indoor gateway, antenna on marker rod", "At risk")
 
 # ---------------------------------------------------------------- D. EC circuit (R3)
 print("\nD. EC circuit")
@@ -224,8 +239,13 @@ out("F4", f"cell center for 40 C or less in bare hot soil: {z_need * 1000:.0f} m
           f"fin spigot with its base at {cell_floor:.0f} mm and the upper probe window starts at {win_top:.0f} mm, so the "
           f"deepest cell center that fits is about {z_max:.0f} mm ({35 + A_max:.1f} C), where the cell already sits; a "
           f"deeper cell alone cannot meet R9 without moving the 150 mm probe that R1 fixes")
-req("R9", f"head about {T_head:.0f} C at 45 C air (parts rated 85 C); cell up to {35 + A_hot:.0f} C in bare hot soil",
-    "-10 to 60 C at the head; -5 to 40 C at the cell", "At risk")
+CELL_DIS_MAX = 60.0     # C, IFR14500EC datasheet discharge range -20 to +60 C (BOM 5, chosen 2026-10-02)
+out("F5", f"chosen cell IFR14500EC class: datasheet discharge -20 to +{CELL_DIS_MAX:.0f} C, charge 0 to +60 C; the hottest cell estimate "
+          f"{35 + A_hot:.0f} C is {CELL_DIS_MAX - 35 - A_hot:.0f} C inside the rated discharge range and above the 40 C of the earlier limit, "
+          f"so decision 4 option B holds and the printed shade skirt is not added; charging stays blocked above 45 C by the charger NTC")
+assert CELL_DIS_MAX >= 55.0
+req("R9", f"head about {T_head:.0f} C at 45 C air (parts rated 85 C); cell up to {35 + A_hot:.0f} C in bare hot soil, inside the cell's -20 to +{CELL_DIS_MAX:.0f} C discharge rating",
+    "-10 to 60 C at the head; at the cell, the chosen cell's rated discharge range (55 C or more), charging blocked above 45 C", "At risk")
 v_l = D["head_air_l"]
 T1, T2 = 293.15, 273.15 + T_head
 dp = 101.325 * (T2 / T1 - 1)

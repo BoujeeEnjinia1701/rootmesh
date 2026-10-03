@@ -45,6 +45,10 @@ PARAMS = {
     "panel": (70.0, 50.0, 3.2),
     # controller board stand-in (Wio-E5 and charger modules on a 56 x 40 prototype board), in guide slots
     "pcb": (56.0, 1.6, 40.0), "pcb_z": 96.0,
+    # status LED (decided 2026-10-02): 5 mm green LED in a lens hole in the head body wall, flange against the
+    # inside face, dome flush with the outside; 560 ohm series resistor (axial, 6.3 x 2.3 mm) lies on the board
+    "led_az": 315.0, "led_z": 100.0, "led_d": 5.0, "led_hole": 5.2, "led_flange": (5.8, 1.0), "led_dome": 0.6,
+    "res": (6.3, 2.3), "res_x": 10.0, "res_dz": 8.0,
     # coax gland and vent on the head body (azimuth from +X, degrees; height)
     "gland_az": 210.0, "coax_z": 100.0, "vent_az": 45.0, "vent_z": 82.0,
     # LiFePO4 14500 cell in a printed holder standing on the fin spigot, below grade
@@ -62,7 +66,7 @@ PARAMS = {
     # marker rod, flag and antenna (Amish decision RMS-DDR-001 D2: antenna at about 1 m on the rod)
     "rod_x": -60.0, "rod_d": 8.0, "rod_len": 1200.0, "rod_bury": 200.0,
     "flag": (140.0, 2.0, 90.0), "flag_z": 840.0,
-    "ant_len": 172.0, "ant_d": 10.0, "ant_center_z": 1000.0,   # half-wave sleeve dipole, 868 MHz
+    "ant_len": 164.0, "ant_d": 10.0, "ant_center_z": 1000.0,   # half-wave sleeve dipole cut for 915 MHz (US915, decided 2026-10-02)
     "coax_d": 3.0, "clip_z": (925.0, 985.0), "tie_z": (250.0, 450.0, 650.0, 900.0),
     # slot tool (BOM 15, one per pilot set; RMS-DDR-002): steel flat bar blade driven with a mallet
     # through the auger hole to pre-cut the fin and EC rod path, then withdrawn
@@ -267,6 +271,7 @@ def build_components(p=PARAMS):
     body -= _radial(4.1, br - 4, R + 6, p["gland_az"], p["coax_z"])
     body += _radial(6, R - 3, R + 3, p["vent_az"], p["vent_z"])                    # vent boss
     body -= _radial(2.0, br - 3, R + 5, p["vent_az"], p["vent_z"])
+    body -= _radial(p["led_hole"] / 2, br - 3, R + 1, p["led_az"], p["led_z"])      # LED lens hole through the wall
     add("body", body, "#E5E7EB", 2, "head", "Head body")
 
     # ---- 2 head cap
@@ -308,6 +313,15 @@ def build_components(p=PARAMS):
     ctrl = _box(-bxx / 2, bxx / 2, -byy / 2, byy / 2, p["pcb_z"] - bzz / 2, p["pcb_z"] + bzz / 2)
     ctrl += _box(-20, 0, -byy / 2 - 4.8, -byy / 2, p["pcb_z"] - 4, p["pcb_z"] + 12)
     add("ctrl", ctrl, "#16A34A", 3, "head", "Controller board")
+
+    # ---- 17 status LED in its lens hole, and its series resistor on the board
+    fl_d, fl_t = p["led_flange"]
+    led = _radial(p["led_d"] / 2 - 0.05, br - fl_t - 6, R + p["led_dome"], p["led_az"], p["led_z"]) \
+        + _radial(fl_d / 2, br - fl_t - 0.2, br - 0.2, p["led_az"], p["led_z"])   # flange stands 0.2 mm off the curved wall
+    add("led", led, "#22C55E", 17, "status", "Status LED, green 5 mm")
+    rl, rdia = p["res"]
+    res = Pos(p["res_x"], p["pcb"][1] / 2 + rdia / 2, p["pcb_z"] + p["res_dz"]) * Rot(0, 90, 0) * Cylinder(rdia / 2, rl)
+    add("resistor", res, "#B45309", 17, "status", "LED series resistor, 560 ohm")
 
     # ---- 4 antenna, clips and coax; 11 marker rod, flag and ties
     rx, rc = p["rod_x"], p["rod_d"] / 2
@@ -382,16 +396,18 @@ NAMES = {"panel": "Solar panel, 0.5 W", "head": "Head body and cap, printed ASA"
          "controller": "Controller board, Wio-E5 and charger", "antenna": "Antenna on marker rod, with coax",
          "cell": "LiFePO4 cell in its holder", "tube": "Stake tube, 40 mm PVC", "fin": "Sensor fin, two printed halves",
          "probes": "Capacitive moisture probes (2)", "ec": "EC electrodes, 316 stainless",
-         "temp": "DS18B20 temperature probe", "marker": "Marker rod and flag", "seals": "Seals, gland and cap screws"}
+         "temp": "DS18B20 temperature probe", "marker": "Marker rod and flag", "seals": "Seals, gland and cap screws",
+         "status": "Status LED and resistor"}
 GROUPS = {"panel": ["panel"], "head": ["body", "cap"], "controller": ["ctrl"], "antenna": ["antenna", "clips", "coax"],
           "cell": ["holder", "cell"], "tube": ["tube"], "fin": ["fin_front", "fin_back"],
           "probes": ["probe_upper", "probe_lower"], "ec": ["ec", "ec_sleeves"], "temp": ["temp"],
-          "marker": ["rod", "flag", "ties"], "seals": ["oring", "gland", "inserts", "screws"]}
+          "marker": ["rod", "flag", "ties"], "seals": ["oring", "gland", "inserts", "screws"],
+          "status": ["led", "resistor"]}
 GCOL = {"panel": "#1E3A8A", "head": "#E5E7EB", "controller": "#16A34A", "antenna": "#374151", "cell": "#C2410C",
         "tube": "#D1D5DB", "fin": "#94A3B8", "probes": "#7C3AED", "ec": "#D4A017", "temp": "#2563EB",
-        "marker": "#EA580C", "seals": "#111827"}
+        "marker": "#EA580C", "seals": "#111827", "status": "#22C55E"}
 GBOM = {"panel": 1, "head": 2, "controller": 3, "antenna": 4, "cell": 5, "tube": 6, "fin": 7, "probes": 8, "ec": 9,
-        "temp": 10, "marker": 11, "seals": 12}
+        "temp": 10, "marker": 11, "seals": 12, "status": 17}
 
 
 def build_parts(p=PARAMS):
@@ -441,6 +457,8 @@ CONTACTS = [
     ("coax", "antenna", "lead to the dipole feed"),
     ("clips", "rod", "clip on the rod"), ("clips", "antenna", "dipole in the clip"),
     ("flag", "rod", "flag sleeve on the rod"),
+    ("led", "body", "LED flange against the inside wall in the lens hole"),
+    ("resistor", "ctrl", "resistor lies on the board, leads soldered"),
 ]
 TOOL_CONTACTS = [("handle", "blade", "bar through the 20.5 mm hole"), ("collars", "handle", "collars on the bar"),
                  ("collars", "blade", "collars against the blade faces"), ("stop", "blade", "blade through the stop slot"),
@@ -487,6 +505,19 @@ def check(p=PARAMS, verbose=True):
     ok(abs(gy) - 6.2 > p["pcb"][1] / 2 + 4.8, "gland locknut clears the board and module")
     ok(d["collar_bot"] < -p["depths"][0] + p["probe_l"] / 2 + 0.01, "upper window ends at the collar, below the tube")
     ok(abs((p["cell_z"] - p["cell_l"] / 2) - d["cell_floor"]) < 0.01, "cell sits on the holder base at the modelled depth")
+    # status LED (decision 6): lens hole clear of the other wall features and the board, dome flush, resistor on the board
+    def sep(a, b):
+        return abs((a - b + 180) % 360 - 180)
+    ok(sep(p["led_az"], p["gland_az"]) >= 45 and sep(p["led_az"], p["vent_az"]) >= 45,
+       "LED lens hole at least 45 degrees round the wall from the gland and the vent")
+    ok(sep(p["led_az"], 90) >= 30 and sep(p["led_az"], 270) >= 30, "LED lens hole clear of the screw bosses")
+    ok(p["led_z"] + p["led_hole"] / 2 < p["split_z"] - 6 and p["led_z"] - p["led_hole"] / 2 > d["floor_top"] + 5,
+       "LED lens hole between the head floor and the cap seat, 6 mm clear of the rim")
+    ok(p["led_hole"] > p["led_d"] and p["led_flange"][0] > p["led_hole"] + 0.4, "flange (5.8 mm) is larger than the 5.2 mm lens hole, so the LED cannot fall out")
+    lx, ly = _polar(d["bore_r"], p["led_az"])
+    ok(math.hypot(lx - p["res_x"], ly) > 15, "LED and resistor are more than 15 mm apart, leads reach the board")
+    ok(abs(p["res_x"]) + p["res"][0] / 2 < p["pcb"][0] / 2 and
+       p["pcb_z"] + p["res_dz"] + p["res"][1] / 2 < p["pcb_z"] + p["pcb"][2] / 2, "resistor lies within the board outline")
     # process: print bed for the fin halves
     fb = build_components(p)["fin_front"].shape.bounding_box()
     L, W = fb.size.Z, max(fb.size.X, fb.size.Y)

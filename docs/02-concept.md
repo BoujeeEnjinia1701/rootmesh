@@ -3,7 +3,7 @@ doc_id: RMS-PRC-001
 title: RootMesh design precis
 project: RootMesh
 doc_type: Design precis
-version: "0.6"
+version: "0.7"
 status: Draft
 date: '2026-10-02'
 author: Amish Chadha
@@ -33,6 +33,10 @@ revisions:
   date: '2026-10-02'
   author: Amish Chadha
   change: 'Decisions of 2026-10-02 (RMS-DEC-001): first users on US915 (Texas A&M AgriLife Extension as first candidate), R9 cell limit restated on condition, status light kept'
+- version: "0.7"
+  date: '2026-10-02'
+  author: Amish Chadha
+  change: "Follow-ups of 2026-10-02: US915 airtime and link budget, status LED, chosen cell and cost redone; open question on region closed"
 ---
 
 # RootMesh design precis
@@ -101,9 +105,9 @@ Assumptions: 11 byte application payload plus 13 bytes of LoRaWAN overhead, 125 
 | SF7 | 62 ms | 4.4 s | 5.9 s |
 | SF9 | 206 ms | 14.8 s | 19.8 s |
 | **SF10 (design case)** | **371 ms** | **26.7 s** | **35.6 s, over the 30 s fair use limit** |
-| SF12 (EU868 only) | 1.48 s | 106.8 s | 142.3 s |
+| SF12 (not allowed on US915) | 1.48 s | 106.8 s | 142.3 s |
 
-At SF10 a 20 min interval fits The Things Network's 30 s per day fair use limit ([The Things Network](https://www.thethingsnetwork.org/docs/lorawan/duty-cycle/)); 15 min does not. With adaptive data rate, stakes close to the gateway will use SF7 to SF9 and could report every 10 to 15 min. The duty cycle in the EU868 1 % sub-bands allows about 36 s per hour, far above this use.
+At SF10 a 20 min interval fits The Things Network's 30 s per day fair use limit ([The Things Network](https://www.thethingsnetwork.org/docs/lorawan/duty-cycle/)); 15 min does not. With adaptive data rate, stakes close to the gateway will use SF7 to SF9 and could report every 10 to 15 min. On US915 there is no duty cycle, but each uplink may stay on a channel for at most 400 ms, so SF10 at 125 kHz (371 ms) is the slowest rate that can be used.
 
 ### Energy
 
@@ -111,9 +115,9 @@ Assumptions: sensors powered for 1 s at about 12 mA; microcontroller active 1.5 
 
 | Quantity | Value (RMS-CAL-001) | Basis | Requirement |
 | --- | --- | --- | --- |
-| Charge per report | 64.0 mAs | 12 + 6 + 44.5 + 1.3 + 0.2 mAs | |
+| Charge per report | 64.2 mAs | 12 + 6 + 44.5 + 1.3 + 0.2 + 0.2 (status LED) mAs | |
 | Reports per day | 72 | Every 20 min | R4 |
-| Load per day with margin | 1.98 mAh (6.3 mWh) | (1.28 active + 0.24 sleep) x 1.3 | |
+| Load per day with margin | 1.98 mAh (6.3 mWh) | (1.29 active + 0.24 sleep) x 1.3 | |
 | Self-discharge | 0.60 mAh per day | 3 % of 600 mAh a month | |
 | **Daily need** | **2.58 mAh** | | |
 | Days on the cell alone | 186 | 600 mAh x 80 % usable / 2.58 mAh | R6 (90 days) met |
@@ -125,15 +129,15 @@ The energy budget has large margin. That also means the panel is not strictly ne
 
 ### Radio link
 
-Assumptions: 868 MHz; stake radiates 14 dBm (EU868 limit 14 dBm ERP), with conducted power raised to 15.5 dBm to cover 1.5 dB of lead and connector loss; dipole taken at 0 dBi; gateway sensitivity -132 dBm at SF10 (typical SX12xx figure); 12 dB loss through the farmhouse wall and window; 10 dB allowance for crop foliage and fading; gateway at 3 m; two-ray ground reflection path loss, 40 log d - 20 log(h_t h_r), valid beyond about 110 m for these heights.
+Assumptions: US915 at 915 MHz; stake radiates 20 dBm, with conducted power raised to 21.6 dBm (module maximum +22 dBm) to cover 1.6 dB of lead and connector loss; dipole taken at 0 dBi; gateway sensitivity -132 dBm at SF10 (typical SX12xx figure); 12 dB loss through the farmhouse wall and window; 10 dB allowance for crop foliage and fading; gateway at 3 m; two-ray ground reflection path loss, 40 log d - 20 log(h_t h_r), valid beyond about 115 m for these heights.
 
 | Case | Path loss at 1 km | Loss budget available | Margin |
 | --- | --- | --- | --- |
-| Stake antenna 0.2 m, indoor gateway (TRL 2 layout) | 124.4 dB | 146 - 12 - 10 = 124 dB | -0.4 dB |
-| **Stake antenna 1 m on the marker rod, indoor gateway (decided)** | **110.5 dB** | **124 dB** | **13.5 dB** |
-| Stake antenna 0.2 m, outdoor gateway on a 6 m mast | 118.4 dB | 146 - 10 = 136 dB | 17.6 dB |
+| Stake antenna 0.2 m, indoor gateway (TRL 2 layout) | 124.4 dB | 152 - 12 - 10 = 130 dB | 5.6 dB |
+| **Stake antenna 1 m on the marker rod, indoor gateway (decided)** | **110.5 dB** | **130 dB** | **19.5 dB** |
+| Stake antenna 0.2 m, outdoor gateway on a 6 m mast | 118.4 dB | 152 - 10 = 142 dB | 23.6 dB |
 
-Raising the antenna to the top of the marker rod (RMS-DDR-001, D2) closes the link at 1 km on paper; at 0 dB margin it would reach about 2.2 km. The remaining risk is a crop taller than the antenna along the path: 50 m of maize or orchard can add about 13 dB and 100 m about 19 dB (Weissberger model), so R5 stays at risk until a range walk. In the US915 plan the stake may transmit up to +20 dBm, which adds about 6 dB.
+Raising the antenna to the top of the marker rod (RMS-DDR-001, D2) closes the link at 1 km on paper; at 0 dB margin it would reach about 3.1 km. The remaining risk is a crop taller than the antenna along the path: 50 m of maize or orchard can add about 13 dB and 100 m about 19 dB (Weissberger model), which leaves 0.1 dB at 100 m, so R5 stays at risk until a range walk.
 
 ### Measurement
 
@@ -146,11 +150,11 @@ Raising the antenna to the top of the marker rod (RMS-DDR-001, D2) closes the li
 
 | Group | Indicative cost | Requirement |
 | --- | --- | --- |
-| One stake (items 1 to 12 and 16) | $59.00 | R12 ($60) met |
-| Three stakes | $177.00 | |
+| One stake (items 1 to 12, 16 and 17) | $59.15 | R12 ($60) met |
+| Three stakes | $177.45 | |
 | Gateway (item 13) | $90.00 | |
 | Slot tool (item 15) | $14.00 | |
-| **Pilot set** | **$281.00** | R12 ($300) met; USD 19 under the value-engineering target |
+| **Pilot set** | **$281.45** | R12 ($300) met; USD 18.55 under the value-engineering target |
 | Reference: Dragino SE01 node | about $151 to $170 per point ([Choovio](https://www.choovio.com/product/se01-lb-lorawan-soil-moisture-ec-sensor/)) | |
 
 ## Key design choices
@@ -162,13 +166,13 @@ Amish decided the choices below on 2026-09-25 by approving the TRL 2 recommendat
 - **Modified hobby capacitive probes** (D7): keeps the stake near $56; accuracy and life are the risks (R1, R14). A commercial reference sensor is to be borrowed for calibration later.
 - **Wio-E5 (STM32WLE5) controller** (D8): one module for radio and application.
 - **LoRaWAN on The Things Network for the pilot** (D3): free and simple; the fair use limit sets the 20 min interval at SF10, and a TTIG-class gateway works only with The Things Stack. A Raspberry Pi gateway with a local ChirpStack server stays a documented later option.
-- **Indoor gateway, antenna on the marker rod** (D2): a sleeve dipole at about 1 m on the rod, fed by a 1.2 m lead, gives 13.5 dB margin at 1 km for $7 a stake. It adds a cable and a snag point; the rod is flexible and flagged.
+- **Indoor gateway, antenna on the marker rod** (D2): a sleeve dipole at about 1 m on the rod, fed by a 1.2 m lead, gives 19.5 dB margin at 1 km on US915 for $7 a stake. It adds a cable and a snag point; the rod is flexible and flagged.
 - **Default interval 20 min** (D9): fits the fair use limit at SF10; faster with adaptive data rate near the gateway.
 - **Budget read as a pilot set** (D4): the USD 300 value-engineering target covers three stakes and one gateway.
 - **Steel slot tool for installation** (RMS-DDR-002): a pointed 32 x 8 mm steel blade, driven with a mallet down the auger hole and withdrawn, pre-cuts the fin path so the fin only widens the slot. Push force falls from 517 N to 376 N in moist loam and from 1,778 N to 1,216 N in firm dry loam (RMS-CAL-001 v0.2). Steel rather than a printed blade, because a printed blade would not survive firm soil.
 - **Cell position kept at 62 mm** (RMS-DDR-002): a deeper cell was checked; in the constructable design the cell already sits as deep as fits above the fin spigot (62 mm, peak 46.8 °C in bare, hot soil), and meeting 40 °C would need about 163 mm, where the upper probe sits.
 
-Decided by Amish on 2026-10-02 (RMS-DEC-001): the first users are a US university extension program with a research farm, on US915, with Texas A&M AgriLife Extension as the first candidate to approach; the cell limit of R9 is restated to the chosen cell's rated discharge range, provided its datasheet rates discharge to 55 °C or more, with charging still blocked above 45 °C, and otherwise a printed shade skirt is added; a green status light is kept on the head, blinking briefly after each uplink and on a magnet or button wake only, once its charge is in the energy budget. The link and power figures above are for EU868 and are to be redone for US915.
+Decided by Amish on 2026-10-02 (RMS-DEC-001): the first users are a US university extension program with a research farm, on US915, with Texas A&M AgriLife Extension as the first candidate to approach; the cell limit of R9 is restated to the chosen cell's rated discharge range, provided its datasheet rates discharge to 55 °C or more, with charging still blocked above 45 °C, and otherwise a printed shade skirt is added; a green status light is kept on the head, blinking briefly after each uplink and on a magnet or button wake only, once its charge is in the energy budget. The link, airtime and power figures above are for US915 and include the status light (RMS-CAL-001 v0.5). The chosen cell is an IFR14500EC class cell, whose datasheet rates discharge from -20 to +60 °C, so no shade skirt is added.
 
 ## Safety
 

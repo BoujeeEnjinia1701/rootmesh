@@ -21,7 +21,7 @@ GRADE = 0.0
 m = build_parts()
 EXPLODE = {"panel": (0, 0, 170), "head": (0, 0, 90), "controller": (190, 0, 60), "antenna": (-120, 0, 120),
            "cell": (190, 0, -50), "tube": (0, 0, 0), "fin": (0, 0, -60), "probes": (190, 0, -70),
-           "ec": (0, 0, -120), "temp": (-170, 0, -60), "marker": (-300, 0, -330), "seals": (-170, 0, 60)}
+           "ec": (0, 0, -120), "temp": (-170, 0, -60), "marker": (-300, 0, -330), "seals": (-170, 0, 60), "status": (-150, 150, 50)}
 parts = [Part(NAMES[k], shape, color, bom, EXPLODE[k]) for k, (shape, color, bom) in m.items()]
 parts.sort(key=lambda p: p.bom)
 
@@ -33,16 +33,16 @@ person = human_figure(1750.0, x=600.0, y=380.0, z=GRADE)
 context = [Part("Soil block, cut away", soil, "#B7A58E"), person]
 
 render_all(
-    parts, project="RootMesh", title="Soil sensor stake concept", dwg_no="RMS-DWG-010", date="2026-10-01",
+    parts, project="RootMesh", title="Soil sensor stake concept", dwg_no="RMS-DWG-010", date="2026-10-02",
     key_figures=["Moisture at 150 and 300 mm, EC and temperature",
                  "LoRaWAN every 20 min at SF10: 0.37 s, 26.7 s/day",
                  "About 2.6 mAh/day; about 186 days dark (RMS-CAL-001)",
-                 "Antenna at 1 m: 13.5 dB margin at 1 km (estimate)",
-                 "Pilot set: 3 stakes, gateway, slot tool $281 (indicative)"],
+                 "US915, antenna at 1 m: 19.5 dB margin at 1 km (estimate)",
+                 "Pilot set: 3 stakes, gateway, slot tool $281.45 (indicative)"],
     scale_figure=False, context=context, cut_exclude=(NAMES["marker"], NAMES["antenna"]),
     flow={"title": "data flow, soil to irrigation decision (estimates)", "unit": "",
           "stages": [("Root-zone soil", "2 depths, EC, temp"), ("Stake reading", "every 20 min"),
-                     ("LoRaWAN uplink", "about 24 B, SF10"), ("Gateway", "1 km, 13.5 dB (est.)"),
+                     ("LoRaWAN uplink", "about 24 B, SF10"), ("Gateway", "1 km, 19.5 dB (est.)"),
                      ("Network server", "TTN (pilot)"), ("Dashboard", "depletion vs threshold"),
                      ("Irrigation decision", "grower")]},
 )

@@ -3,7 +3,7 @@ doc_id: RMS-DEC-001
 title: RootMesh design decisions register
 project: RootMesh
 doc_type: Design decisions register
-version: "0.2"
+version: "0.3"
 status: Draft
 date: '2026-10-02'
 author: Amish Chadha
@@ -17,6 +17,10 @@ revisions:
     date: '2026-10-02'
     author: Amish Chadha
     change: Amish approved the recommendations for open items 1 to 7 on 2026-10-02 (RMS-DDR-003 accepted, fin printed on a 300 mm class printer, head bonded, R9 cell limit restated on condition, Texas A&M AgriLife Extension on US915 as first candidate, status light, gateway indoors); moved to decisions made
+  - version: "0.3"
+    date: '2026-10-02'
+    author: Amish Chadha
+    change: "Follow-ups of 2026-10-02 carried out; cost restated with the status LED (line 17)"
 ---
 
 # RootMesh design decisions register
@@ -42,10 +46,10 @@ None. All open decisions were decided on 2026-10-02.
 
 ## Value engineering
 
-Value-engineering target: USD 300 (a hypothetical control target, not a limit). Estimated cost of the constructable design: USD 281 for the pilot set of three stakes, one gateway and one slot tool (USD 19 under the target); USD 59 per stake against R12's USD 60. Main cost drivers and savings worth trying:
+Value-engineering target: USD 300. Estimated cost of the constructable design: USD 281.45 (USD 18.55 under the target), for the pilot set of three stakes, one gateway and one slot tool; USD 59.15 per stake against R12's USD 60. The target is a hypothetical control target, not a limit. Main cost drivers and savings worth trying:
 
 - The largest lines are the gateway (USD 90, about a third of the set), the controller board (USD 15 a stake, USD 45 for three), the antenna and feed (USD 7 a stake) and the seals (USD 5 a stake).
-- Making the design constructable added USD 3.50 a stake (the two-part head, the fin halves, and the inserts, screws, epoxy and prototype board of line 16) and USD 4 on the slot tool (shaft collars and thumb screw); the set rose from USD 266.50 to USD 281.
+- Making the design constructable added USD 3.50 a stake (the two-part head, the fin halves, and the inserts, screws, epoxy and prototype board of line 16) and USD 4 on the slot tool (shaft collars and thumb screw); the set rose from USD 266.50 to USD 281, and to USD 281.45 on 2026-10-02 with the status LED and resistor of line 17 (USD 0.15 a stake).
 - Savings worth trying: one gateway serves a whole farm, so the per-stake cost falls quickly in larger sets; the controller board's price should fall once the carrier board is designed at TRL 4; one slot tool serves every stake on a farm; O-rings, glands and inserts are much cheaper bought by the hundred.
 
 ## Decisions made

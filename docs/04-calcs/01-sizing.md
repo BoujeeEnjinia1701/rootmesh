@@ -3,7 +3,7 @@ doc_id: RMS-CAL-001
 title: RootMesh sizing calculations
 project: RootMesh
 doc_type: Calculation
-version: "0.4"
+version: "0.5"
 status: Draft
 date: '2026-10-02'
 author: Amish Chadha
@@ -25,11 +25,15 @@ revisions:
   date: '2026-10-02'
   author: Amish Chadha
   change: R9 target in the requirement table restated as decided by Amish on 2026-10-02; no number re-run
+- version: "0.5"
+  date: '2026-10-02'
+  author: Amish Chadha
+  change: "Re-run for the 2026-10-02 decisions: US915 link budget and airtime, status LED charge, cell chosen (IFR14500EC class, discharge to 60 C), BOM line 17; no requirement changed status"
 ---
 
 # RootMesh sizing calculations
 
-On paper, RootMesh meets eight of its fourteen requirements, has five at risk, and has one that cannot be verified at TRL 3. No requirement is shown to be missed outright. The five at risk are moisture accuracy (R1), which depends on soil contact and calibration; range (R5), where raising the antenna to 1 m on the marker rod gives 13.5 dB of margin at 1 km, but a crop taller than the antenna can take 13 to 19 dB of it; temperature range (R9), where the head can reach about 64 °C and the cell about 47 °C in bare, hot soil; installation (R10), where pushing the fin into firm dry loam needs about 1.8 kN, more than one person can lean on it; and probe life (R14). Version 0.2 adds the two design responses Amish accepted on 2026-09-25 (RMS-DDR-002): a steel slot tool cuts the push force in moist loam from 526 N to 386 N, within one person's strength, but firm dry loam still needs about 1.2 kN; and a check of a deeper cell shows that no cell position that fits above the fin keeps the cell under 40 °C in bare, hot soil. The calculations also corrected three TRL 2 figures: days on the cell alone fall from about 240 to about 186 once LiFePO4 self-discharge is counted, the harvest ratio falls from about 70 to about 58 times daily need, and the pilot set rises from about $246 to $256.50 with the antenna feed and a vent ($266.50 with the slot tool added in v0.2, and $281.00 for the constructable design of v0.3, $19.00 under the $300 value-engineering target). Every number in this note is printed by `docs/04-calcs/sizing.py`; the tag in brackets, for example [B4], is the line of that script's output that carries it.
+On paper, RootMesh meets eight of its fourteen requirements, has five at risk, and has one that cannot be verified at TRL 3. No requirement is shown to be missed outright. The five at risk are moisture accuracy (R1), which depends on soil contact and calibration; range (R5), where raising the antenna to 1 m on the marker rod gives 19.5 dB of margin at 1 km on US915, but a crop taller than the antenna can take 13 to 19 dB of it; temperature range (R9), where the head can reach about 64 °C and the cell about 47 °C in bare, hot soil; installation (R10), where pushing the fin into firm dry loam needs about 1.8 kN, more than one person can lean on it; and probe life (R14). Version 0.2 adds the two design responses Amish accepted on 2026-09-25 (RMS-DDR-002): a steel slot tool cuts the push force in moist loam from 526 N to 386 N, within one person's strength, but firm dry loam still needs about 1.2 kN; and a check of a deeper cell shows that no cell position that fits above the fin keeps the cell under 40 °C in bare, hot soil. The calculations also corrected three TRL 2 figures: days on the cell alone fall from about 240 to about 186 once LiFePO4 self-discharge is counted, the harvest ratio falls from about 70 to about 58 times daily need, and the pilot set rises from about $246 to $256.50 with the antenna feed and a vent ($266.50 with the slot tool added in v0.2, and $281.00 for the constructable design of v0.3, and $281.45 with the status LED added in v0.5, $18.55 under the $300 value-engineering target). Every number in this note is printed by `docs/04-calcs/sizing.py`; the tag in brackets, for example [B4], is the line of that script's output that carries it.
 
 > **Safety:** These are first-principles estimates for a paper proof of concept. They do not replace measurement of the cell temperature in the field, a range walk, or checks of the charger's temperature cut-off. The stake holds a lithium cell; see RMS-PRC-001, Safety.
 
@@ -54,7 +58,7 @@ The reference case is one stake in loam, sensing at 150 mm and 300 mm, reporting
 | Energy per report | Transmit 120 mA for the time on air (datasheet rounded up for the carrier); receive 6.7 mA for 0.2 s; sensors 12 mA for 1 s; core 4 mA for 1.5 s; EC burst 10 mA for 20 ms; board sleep 10 µA; 30 % margin | Order-of-magnitude figures to confirm on hardware |
 | Cell | 600 mAh LiFePO4, 3.2 V, 80 % usable, self-discharge 3 % per month | Typical 14500 LiFePO4 cells |
 | Harvest | 0.5 W, 5 V panel gives 100 mA at 1,000 W/m²; 50 % derate for tilt, dust, heat and linear charger headroom | Linear charger passes panel current, not power |
-| Link | 14 dBm radiated (EU868 limit is 14 dBm ERP), coax loss made up by conducted power; gateway sensitivity -132 dBm at SF10; 12 dB wall loss; 10 dB foliage and fading allowance; gateway antenna 3 m; two-ray path loss 40 log d - 20 log(h_t h_r) | Typical SX12xx figures; a range walk would replace this at TRL 4 |
+| Link | 915 MHz (US915); 20 dBm radiated (module maximum +22 dBm conducted, less 1.6 dB of coax; the US915 limit is far higher), coax loss made up by conducted power; gateway sensitivity -132 dBm at SF10; 12 dB wall loss; 10 dB foliage and fading allowance; gateway antenna 3 m; two-ray path loss 40 log d - 20 log(h_t h_r) | Typical SX12xx figures; a range walk would replace this at TRL 4 |
 | Foliage | Weissberger model for a crop taller than the antenna along the path | Standard empirical vegetation model |
 | EC | Two parallel 4 mm rods, 24 mm pitch, 60 mm exposed; 330 Ω reference; 12-bit ADC; double layer 10 µF/cm² | Parallel-cylinder cell constant; low-end double-layer value is the conservative case |
 | Thermal | Panel NOCT 45 °C; head interior at air temperature plus 0.6 of the panel rise; soil diffusivity 0.5 × 10⁻⁶ m²/s with a daily sine at the surface | Engineering estimates |
@@ -72,20 +76,20 @@ A 24 byte uplink at SF10 takes 371 ms on air [A2-SF10]. At the 20 min default, 7
 | SF8 | 113 ms | 8.1 s | 10.9 s | 5.4 min |
 | SF9 | 206 ms | 14.8 s | 19.8 s | 9.9 min |
 | **SF10** | **371 ms** | **26.7 s** | **35.6 s** | **17.8 min** |
-| SF11 (EU868) | 823 ms | 59.3 s | 79.0 s | 39.5 min |
-| SF12 (EU868) | 1,483 ms | 106.8 s | 142.3 s | 71.2 min |
+| SF11 (not allowed on US915) | 823 ms | 59.3 s | 79.0 s | 39.5 min |
+| SF12 (not allowed on US915) | 1,483 ms | 106.8 s | 142.3 s | 71.2 min |
 
-The EU868 1 % duty cycle closes the sub-band for 37 s after each SF10 uplink, far less than the 1,200 s interval [A3]. With adaptive data rate, stakes that reach the gateway at SF9 or faster can report every 10 to 15 min. At SF11 and SF12 the 20 min default breaks the fair use limit, so a stake that needs those rates must report every 40 to 72 min; this is why the design case keeps the link at SF10 or faster (section C).
+US915 has no duty-cycle limit, but each uplink may stay on a channel for at most 400 ms; SF10 at 125 kHz takes 371 ms, so DR0 is the slowest rate that can be used and SF11 and SF12 at 125 kHz are not allowed [A3]. Fair use, not the radio rules, then sets the airtime. With adaptive data rate, stakes that reach the gateway at SF9 or faster can report every 10 to 15 min. At SF11 and SF12 the 20 min default breaks the fair use limit, so a stake that needs those rates must report every 40 to 72 min; this is why the design case keeps the link at SF10 or faster (section C).
 
 ## B. Energy (R6, R7)
 
-One report costs 64.0 mAs, most of it the transmission (44.5 mAs) [B1]. With 72 reports, sleep and a 30 % margin the load is 1.98 mAh (6.3 mWh) a day [B2]; adding 0.60 mAh a day of self-discharge gives a daily need of 2.58 mAh [B3]. The 600 mAh cell alone then lasts 186 days (243 days if self-discharge were ignored, which is the TRL 2 figure of about 240) [B4].
+One report costs 64.2 mAs, most of it the transmission (44.5 mAs) [B1]. The status LED (decision 6 of 2026-10-02) is a green 5 mm LED behind a 560 ohm resistor on 3.3 V, which draws 2.14 mA; one 100 ms blink after each uplink adds 0.21 mAs to the report, and three blinks on each of an assumed five magnet or button wakes a day add 3.2 mAs a day [B1b]. With 72 reports, the wake blinks, sleep and a 30 % margin the load is still 1.98 mAh (6.3 mWh) a day [B2]; adding 0.60 mAh a day of self-discharge gives a daily need of 2.58 mAh [B3]. The 600 mAh cell alone then lasts 186 days (242 days if self-discharge were ignored, which is the TRL 2 figure of about 240) [B4].
 
 *Table 3. Harvest against daily need of 2.58 mAh [B5].*
 
 | Case | Harvest | Ratio to need |
 | --- | --- | --- |
-| 3 sun hours, open sky | 150 mAh/day | 58.2 |
+| 3 sun hours, open sky | 150 mAh/day | 58.1 |
 | 1 sun hour, open sky (R6 case) | 50 mAh/day | 19.4 |
 | 3 sun hours, canopy passing 10 % | 15 mAh/day | 5.8 |
 
@@ -93,11 +97,11 @@ The cell stores 1.92 Wh, inside the 2 Wh limit, with an NTC window of 0 to 45 °
 
 ## C. Radio link (R5)
 
-With the antenna at 1 m on the marker rod (RMS-DDR-001, D2), path loss at 1 km is 110.5 dB against an available 124 dB, a margin of 13.5 dB after the 10 dB foliage and fading allowance [C2-2]. The TRL 2 case with the antenna 0.2 m above grade has -0.4 dB [C2-1], and an outdoor gateway on a 6 m mast would have 17.6 dB [C2-3]. At 0 dB margin the decided layout reaches about 2.2 km [C3]. The two-ray model holds beyond about 109 m for these heights.
+With the antenna at 1 m on the marker rod (RMS-DDR-001, D2), path loss at 1 km is 110.5 dB against an available 130 dB on US915, a margin of 19.5 dB after the 10 dB foliage and fading allowance [C2-2]. The TRL 2 case with the antenna 0.2 m above grade has 5.6 dB [C2-1], and an outdoor gateway on a 6 m mast would have 23.6 dB [C2-3]. At 0 dB margin the decided layout reaches about 3.1 km [C3]. The two-ray model holds beyond about 115 m for these heights. The margins are 6 dB higher than the 868 MHz figures of version 0.4 (13.5, -0.4 and 17.6 dB) because the stake now radiates 20 dBm instead of 14 dBm; the loss at 1 km is unchanged because the model has no frequency term.
 
-To keep 14 dBm radiated through 1.5 dB of lead and connectors, the module transmits at 15.5 dBm, well inside its +22 dBm [C1]. A half-wave sleeve dipole replaces the TRL 2 quarter-wave whip, because a whip on a rod has no ground plane; the budget takes it at 0 dBi although a dipole gives about 2 dBi.
+To keep 20 dBm radiated through 1.6 dB of lead and connectors, the module transmits at 21.6 dBm, just inside its +22 dBm [C1]. The half-wave sleeve dipole is cut to 164 mm for 915 MHz (a half wave is 163.9 mm in free space [C0]; it was 172 mm at 868 MHz). A half-wave sleeve dipole replaces the TRL 2 quarter-wave whip, because a whip on a rod has no ground plane; the budget takes it at 0 dBi although a dipole gives about 2 dBi.
 
-The risk is tall crops. If the path runs through a crop taller than 1 m, such as maize or orchard rows, Weissberger's model gives 7.4 dB for 20 m of foliage, 12.7 dB for 50 m and 19.2 dB for 100 m [C4]. Beyond about 34 m of tall crop the 10 dB allowance is used up and the 13.5 dB margin starts to go [C5]. Short vegetable crops leave the antenna clear. R5 is therefore **at risk** in tall crops until a range walk (TRL 4) measures it.
+The risk is tall crops. If the path runs through a crop taller than 1 m, such as maize or orchard rows, Weissberger's model gives 7.5 dB for 20 m of foliage, 12.9 dB for 50 m and 19.4 dB for 100 m [C4]. Beyond about 33 m of tall crop the 10 dB allowance is used up and the 19.5 dB margin starts to go [C5]; at 100 m of tall crop it is down to 0.1 dB. Short vegetable crops leave the antenna clear. R5 is therefore **at risk** in tall crops until a range walk (TRL 4) measures it.
 
 ## D. EC circuit (R3)
 
@@ -129,9 +133,9 @@ In full sun at 45 °C air the panel reaches about 76 °C and the head interior a
 | Under a crop canopy, summer | 20 to 36 °C | 23.3 to 32.7 °C |
 | Bare soil, cold winter | -7 to 3 °C | -4.9 to 0.9 °C |
 
-In bare, hot soil the cell exceeds the 40 °C limit of R9 by about 7 °C. The charger's 45 °C cut-off stops charging for part of the afternoon but does not stop the cell from warming. R9 is **at risk**.
+In bare, hot soil the cell exceeds the 40 °C limit of R9 by about 7 °C. The charger's 45 °C cut-off stops charging for part of the afternoon but does not stop the cell from warming. R9 is **at risk**. Decided on 2026-10-02: the limit at the cell is restated to the chosen cell's rated discharge range. The cell is an IFR14500EC class LiFePO4 cell, whose datasheet rates discharge from -20 to +60 °C and charge from 0 to +60 °C [F5]. That is above the 55 °C the decision asks for and 13 °C above the hottest cell estimate of 47 °C, so the printed shade skirt is not added. Charging stays blocked above 45 °C by the charger. The head still reaches about 64 °C against its 60 °C limit, so R9 stays **at risk** for the head.
 
-Amish accepted the recommendation to check a deeper cell (RMS-DDR-002). To stay at or below 40 °C in bare, hot soil the cell center would have to sit about 163 mm deep [F4]. In the constructable design (RMS-DDR-003) the cell stands in a holder on the fin spigot, with the holder base 87 mm below grade, and the upper probe window starts at 110 mm, so the deepest cell center that fits is 62 mm, where the cell already sits (46.8 °C). Version 0.2 found about 65 mm (46.5 °C) before the holder was added. A deeper cell alone therefore cannot meet R9 without moving the 150 mm probe that R1 fixes, and the cell stays at 62 mm. The remaining responses, shading the soil around the head or restating the cell limit to the chosen cell's rated discharge range while charging stays blocked above 45 °C, are a new proposal awaiting Amish (RMS-DDR-002, P1).
+Amish accepted the recommendation to check a deeper cell (RMS-DDR-002). To stay at or below 40 °C in bare, hot soil the cell center would have to sit about 163 mm deep [F4]. In the constructable design (RMS-DDR-003) the cell stands in a holder on the fin spigot, with the holder base 87 mm below grade, and the upper probe window starts at 110 mm, so the deepest cell center that fits is 62 mm, where the cell already sits (46.8 °C). Version 0.2 found about 65 mm (46.5 °C) before the holder was added. A deeper cell alone therefore cannot meet R9 without moving the 150 mm probe that R1 fixes, and the cell stays at 62 mm. The remaining responses, shading the soil around the head or restating the cell limit to the chosen cell's rated discharge range while charging stays blocked above 45 °C, are decided on 2026-10-02 (RMS-DDR-002, P1; see above).
 
 A sealed head holds about 272 cm³ of air (308 cm³ before the body wall was thickened to 5 mm in v0.3). Heating from 20 to 64 °C raises its pressure by 15.1 kPa, three times the 4.9 kPa of 0.5 m immersion [F3]. Daily pumping of that size would work water past the seals, so an adhesive ePTFE vent membrane is added to the head (BOM line 12). Whether the head reaches IP67 and the buried part IP68 needs an immersion test, so R8 is **not verifiable at TRL 3**.
 
@@ -145,7 +149,7 @@ The head top is 171 mm above grade, the antenna spans 914 to 1,086 mm on the fle
 
 ## H. Cost (R12, R13, R14)
 
-From `bom/bom.csv`, one stake costs $59.00, three cost $177.00, and with the $90 gateway and the $14 slot tool the pilot set is $281.00. Value-engineering target: USD 300. Estimated cost of the constructable design: USD 281 (USD 19 under the target) [H1]. The $3.50 added per stake since v0.2 is the parts that make the design buildable (RMS-DDR-003): the two-part head, the fin halves, and BOM line 16 (inserts, cap screws, sealing washers, epoxy, sleeves and the prototype board). The per-stake figure in R12 ($60) is met by $1.00. All prices are indicative. R13 is met by design with The Things Network community server and a local open dashboard with CSV export. R14 (12 months buried) depends on the epoxy seal of the probe edges and on the stainless electrodes and cannot be shown by calculation; it stays **at risk**.
+From `bom/bom.csv`, one stake costs $59.15, three cost $177.45, and with the $90 gateway and the $14 slot tool the pilot set is $281.45. Value-engineering target: USD 300. Estimated cost of the constructable design: USD 281.45 (USD 18.55 under the target) [H1]. The $3.50 added per stake since v0.2 is the parts that make the design buildable (RMS-DDR-003): the two-part head, the fin halves, and BOM line 16 (inserts, cap screws, sealing washers, epoxy, sleeves and the prototype board); BOM line 17 (status LED and resistor, $0.15 per stake) was added on 2026-10-02. The per-stake figure in R12 ($60) is met by $0.85. All prices are indicative. R13 is met by design with The Things Network community server and a local open dashboard with CSV export. R14 (12 months buried) depends on the epoxy seal of the probe edges and on the stainless electrodes and cannot be shown by calculation; it stays **at risk**.
 
 ## Results
 
@@ -154,8 +158,8 @@ From `bom/bom.csv`, one stake costs $59.00, three cost $177.00, and with the $90
 | ID | Value | Target | Status |
 | --- | --- | --- | --- |
 | R1 | Depths 150 and 300 mm by model; accuracy unverified | 150 and 300 mm (±25 mm); ±3 % VWC after site calibration | At risk |
-| R5 | 13.5 dB margin at 1 km; tall crops take 13 to 19 dB | 90 % of uplinks at 1 km, indoor gateway, antenna on the marker rod | At risk |
-| R9 | Head about 64 °C at 45 °C air; cell up to 47 °C in bare hot soil; the cell already sits as deep as fits (62 mm) | -10 to 60 °C at the head; the cell's rated discharge range, 55 °C or more, charging blocked above 45 °C (restated 2026-10-02) | At risk (head) |
+| R5 | 19.5 dB margin at 1 km on US915; tall crops take 13 to 19 dB, leaving 0.1 dB at 100 m of crop | 90 % of uplinks at 1 km, indoor gateway, antenna on the marker rod | At risk |
+| R9 | Head about 64 °C at 45 °C air; cell up to 47 °C in bare hot soil, inside the chosen cell's -20 to +60 °C discharge rating [F5] | -10 to 60 °C at the head; the cell's rated discharge range, 55 °C or more, charging blocked above 45 °C (restated 2026-10-02) | At risk (head) |
 | R10 | With the slot tool 386 N in moist loam, 1,245 N in firm dry loam (without: 526 N, 1,807 N) | One person, 50 mm auger, 15 min; depths ±25 mm | At risk |
 | R14 | Sealed probes, 316 stainless electrodes; life unverified | 12 months buried | At risk |
 | R8 | 15 kPa daily thermal pumping without a vent; vent added | Head IP67; buried IP68 at 0.5 m; UV-stable | Not verifiable at TRL 3 |
@@ -165,7 +169,7 @@ From `bom/bom.csv`, one stake costs $59.00, three cost $177.00, and with the $90
 | R6 | 19 times need at 1 sun hour; 186 days dark | Energy-neutral at 1 sun hour; 90 days dark | Met |
 | R7 | LiFePO4, 1.92 Wh, NTC 0 to 45 °C, PTC fuse | LiFePO4, 2 Wh or less, fused, charge 0 to 45 °C | Met |
 | R11 | Head 171 mm; flag 840 mm, rod 1,000 mm | Rigid head 300 mm or less; marker 1 m or more | Met |
-| R12 | $59.00 per stake; $281.00 pilot set (USD 19 under the value-engineering target) | $60 per stake; $300 pilot set | Met |
+| R12 | $59.15 per stake; $281.45 pilot set (USD 18.55 under the value-engineering target) | $60 per stake; $300 pilot set | Met |
 | R13 | TTN community server, local dashboard, CSV | No paid subscription; CSV export; open dashboard | Met |
 
 Counts: met 8, at risk 5, not verifiable at TRL 3 1, not met 0.
@@ -174,7 +178,7 @@ Counts: met 8, at risk 5, not verifiable at TRL 3 1, not met 0.
 
 - Days on the cell alone: about 240 at TRL 2, now 186 with self-discharge.
 - Harvest to use ratio: about 70 times at TRL 2, now 58 times the daily need (including self-discharge) at 3 sun hours, 19 times at 1 sun hour and 5.8 times under a canopy.
-- Link margin with the antenna on the marker rod: about 14 dB at TRL 2, now 13.5 dB with 1.5 dB of lead loss made up by conducted power.
+- Link margin with the antenna on the marker rod: about 14 dB at TRL 2, 13.5 dB at 868 MHz in version 0.4, now 19.5 dB on US915 at 20 dBm radiated with 1.6 dB of lead loss made up by conducted power.
 - Pilot set cost: about $246 at TRL 2, now $256.50 ($266.50 with the slot tool from v0.2); one stake about $52, now $55.50.
 - The whip antenna becomes a half-wave sleeve dipole, because a whip on the rod has no ground plane.
 
@@ -193,3 +197,12 @@ Re-run on 2026-10-01 for the constructable design (RMS-DDR-003). No requirement 
 - R8: head air 308 cm³ to 272 cm³ with the 5 mm body wall; the pressure rise is unchanged at 15.1 kPa. Still not verifiable at TRL 3.
 - R12: one stake $55.50 to $59.00, pilot set $266.50 to $281.00, USD 19 under the USD 300 value-engineering target. Still met.
 
+## Changes in version 0.5
+
+Re-run on 2026-10-02 for the decisions of that day (RMS-DEC-001). No requirement changed status.
+
+- R5: US915 at 915 MHz, 20 dBm radiated. Margin at 1 km 13.5 dB to 19.5 dB; tall crops take 13 to 19 dB, leaving 0.1 dB at 100 m. Still at risk. Dipole cut from 172 to 164 mm [C0].
+- R4: the 868 MHz duty-cycle line is replaced by the 400 ms dwell limit; SF10 takes 371 ms and stays the slowest rate. Still met.
+- R6: the status LED adds 0.21 mAs per report and 3.2 mAs a day for wakes [B1b]; the daily need is unchanged to the digit shown (2.58 mAh) and the cell lasts 186 days. Still met.
+- R9: the cell is chosen, IFR14500EC class, discharge -20 to +60 °C [F5]; no shade skirt. The head stays over 60 °C, so still at risk.
+- R12: one stake $59.00 to $59.15, pilot set $281.00 to $281.45, USD 18.55 under the USD 300 value-engineering target. Still met.

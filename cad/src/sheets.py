@@ -18,6 +18,7 @@ from model import PARAMS as P, build_parts, derived  # noqa: E402
 
 DATE = "2026-09-25"
 DATE_P4 = "2026-10-01"
+DATE_P5 = "2026-10-02"
 ACC = "#0F766E"
 
 
@@ -103,14 +104,15 @@ def main():
     elev = safe_project_views(full, work / "full", names=("front", "iso"))
     bb = stake.bounding_box()
 
-    s = Sheet(project="RootMesh", title="General arrangement, sensor stake", dwg_no="RMS-DWG-001", rev="P4",
-              author="Amish Chadha", date=DATE_P4, scale=0.2, theme="technical",
+    s = Sheet(project="RootMesh", title="General arrangement, sensor stake", dwg_no="RMS-DWG-001", rev="P5",
+              author="Amish Chadha", date=DATE_P5, scale=0.2, theme="technical",
               material="ASA head, PVC tube, PETG or ASA fin, 316 stainless electrodes; bought-in parts per bom/bom.csv. "
                        "PRELIMINARY, NOT FOR FABRICATION",
               revisions=[("P1", "Preliminary GA for TRL 3 (from cad/src/model.py)", DATE, "AC"),
                          ("P2", "Slot tool note added (RMS-DDR-002)", DATE, "AC"),
                          ("P3", "Layout and labels tidied", DATE, "AC"),
-                         ("P4", "Design for construction (RMS-DDR-003)", DATE_P4, "AC")])
+                         ("P4", "Design for construction (RMS-DDR-003)", DATE_P4, "AC"),
+                         ("P5", "US915 dipole, status LED, cell chosen (2026-10-02)", DATE_P5, "AC")])
     s.add_ortho(views)
     k = s.scale
     c = ortho_cells(k, views)
@@ -179,8 +181,9 @@ def main():
         f"Fin {P['fin_w']:.0f} x {P['fin_t']:.0f} x {D['fin_len']:.0f} in two glued halves; collar {P['tube_od']:.0f} dia, spigot {P['spigot_d']:.1f}",
         f"Probe windows centered {P['depths'][0]:.0f} and {P['depths'][1]:.0f} deep, {P['probe_l']:.0f} long",
         f"DS18B20 at {P['t_depth']:.0f}; EC rods {P['ec_d']:.0f} dia at {P['ec_pitch']:.0f} pitch, {P['ec_exposed']:.0f} exposed",
-        f"Cell 14500 LiFePO4 centered {-P['cell_z']:.0f} below grade",
-        f"Antenna sleeve dipole centered {P['ant_center_z']:.0f} on the marker rod (RMS-DDR-001 D2)",
+        f"Cell 14500 LiFePO4 (IFR14500EC class) centered {-P['cell_z']:.0f} below grade",
+        f"Antenna 915 MHz dipole, {P['ant_len']:.0f} long, centered {P['ant_center_z']:.0f} on the marker rod (US915)",
+        f"Status LED 5 mm in a {P['led_hole']:.1f} hole, {P['led_z'] - P['head_z0']:.0f} above the head base, front right",
         f"Fin pushed {D['push_depth']:.0f} into undisturbed soil below a 50 dia auger hole",
         f"Slot tool (BOM 15, separate): {P['slot_w']:.0f} x {P['slot_t']:.0f} steel blade, point {-D['ec_bot']:.0f} deep, {P['stop_d']:.0f} dia stop collar",
         "Third-angle; front view from -Y; X toward the equator",

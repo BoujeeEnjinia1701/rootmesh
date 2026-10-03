@@ -11,7 +11,9 @@ through the stakes so the sensing depths show, two more stakes and the LoRaWAN g
 short timber post.
 APPEARANCE MODEL ONLY: no tolerances, no fabrication detail. CONCEPT, NOT FOR FABRICATION.
 
-Every main dimension and interface comes from PARAMS and derived() in model.py. Axes as
+Every main dimension and interface comes from PARAMS and derived() in model.py, including the constructable head (lens hole,
+gland and vent at the model azimuths), the fin collar and spigot, the cell holder, the two antenna clips and the 915 MHz dipole
+(updated 2026-10-02). Axes as
 model.py: stake 1 at the origin, grade at Z = 0, Z up, X toward the equator (the panel faces +X),
 marker rod on -X. The front of the render is -Y. Render layout (not a field layout): stakes 2
 and 3 stand 330 mm either side of stake 1 on the same section plane, and the gateway, which the
@@ -37,10 +39,10 @@ RENDER_VIEWS = [
     {"name": "hero", "groups": ["shell", "internal", "context"], "explode": False, "el": 30, "az": -40,
      "note": "Product render from the front right and above (about 30 deg elevation); three stakes in a soil "
              "block cut away through the stakes to show the fins at sensing depth, marker rods with flags and "
-             "antennas, and the gateway on a short post behind (render layout; the pilot gateway sits indoors)"},
+             "antennas, and the gateway on a short post behind them. The post is a layout only: the pilot gateway sits indoors at the farmhouse"},
     {"name": "exploded", "groups": ["shell", "internal", "accessory"], "explode": True, "el": 28, "az": -55,
      "note": "Exploded view from the front right and above (about 28 deg elevation): solar cap and panel, head "
-             "enclosure, controller board, O-ring, LiFePO4 cell, stake tube, sensor fin, moisture probes, "
+             "enclosure with its status light, controller board, O-ring, LiFePO4 cell, stake tube, sensor fin, moisture probes, "
              "temperature probe and EC electrodes"},
     {"name": "detail", "groups": ["shell", "internal"], "explode": False, "el": 16, "az": -35,
      "note": "Detail from the front right, slightly above (about 16 deg elevation): one stake out of the soil, "
@@ -130,6 +132,16 @@ def _curved_patch(r_in, r_out, a_mid, a_span, z0, z1):
     return ring & keep
 
 
+def _rad(r, r0, r1, az, z):
+    """Cylinder of radius r along the radial line at azimuth az (deg) from radius r0 to r1 at height z (as model.py)."""
+    return Pos(0, 0, z) * Rot(0, 0, az) * Rot(0, 90, 0) * Pos(0, 0, (r0 + r1) / 2) * Cylinder(r, r1 - r0)
+
+
+def _polar(r, az):
+    a = math.radians(az)
+    return r * math.cos(a), r * math.sin(a)
+
+
 def _slope(P, D):
     """Location of the slope plane: origin on the axis at slope_z, +Z along the slope normal."""
     return Pos(0, 0, D["slope_z"]) * Rot(0, P["tilt"], 0)
@@ -149,8 +161,8 @@ def _head(P, D):
     head -= Pos(0, 0, z0 + 56) * Cylinder(R - w, 80)
     head -= Pos(0, 0, z0 + P["socket_depth"] + 4) * Cylinder(14, 20)
     head -= Pos(0, 0, z0 + P["socket_depth"] / 2) * Cylinder(P["tube_od"] / 2 + 0.5, P["socket_depth"] + 0.01)
-    # status light opening on the front (-Y)
-    head -= Pos(0, -R + 1.0, 112.0) * Rot(90, 0, 0) * Cylinder(2.3, 6.0)
+    # status light lens hole (model.py: 5.2 mm hole at led_az, led_z; decision 6 of 2026-10-02)
+    head -= _rad(P["led_hole"] / 2, R - w - 2, R + 2, P["led_az"], P["led_z"])
     # split: body below, solar cap above, with a parting-line gap
     below = SL * Pos(0, 0, -CAP_T - GROOVE / 2 - 150) * Box(400, 400, 300)
     above = SL * Pos(0, 0, -CAP_T + GROOVE / 2 + 150) * Box(400, 400, 300)
@@ -161,15 +173,16 @@ def _head(P, D):
     ribs = []
     for k in range(RIB_N):
         a = 360.0 * k / RIB_N
-        if abs(((a - 90.0) + 180) % 360 - 180) < 12:
+        if any(abs(((a - az) + 180) % 360 - 180) < 12 for az in (P["vent_az"], P["gland_az"], P["led_az"])):
             continue
         rib = Rot(0, 0, a) * Pos(R + 0.35, 0, RIB_Z[0] + rh / 2) * Box(1.6, 1.5, rh)
         ribs.append(rib)
     body += _union(ribs)
-    # coax gland boss (-X) and ePTFE vent boss (+Y), as model.py
-    gland = Pos(-R - 4, 0, P["coax_z"]) * Rot(0, 90, 0) * Cylinder(6, 10)
-    vent = Pos(0, R + 3, z0 + 30) * Rot(90, 0, 0) * Cylinder(5, 7)
+    # coax gland boss and ePTFE vent boss at the azimuths and heights of model.py
+    gland = _rad(7, R - 2, R + 4, P["gland_az"], P["coax_z"])
+    vent = _rad(6, R - 3, R + 3, P["vent_az"], P["vent_z"])
     body += gland + vent
+    body -= _rad(2.0, R - w - 1, R + 4, P["vent_az"], P["vent_z"])
     return body, cap
 
 
@@ -213,9 +226,11 @@ def _fin(P, D):
     for dz in P["depths"]:
         win = Pos(0, 0, -dz) * Box(P["fin_w"] - 8, P["fin_t"] + 2, P["probe_l"])
         fin -= win
-    spig = Pos(0, 0, P["fin_top"] + P["spigot_l"] / 2 - 10) * Cylinder(P["tube_id"] / 2 - 0.3, P["spigot_l"])
+    collar = Pos(0, 0, D["collar_bot"] + P["collar_h"] / 2) * Cylinder(P["tube_od"] / 2, P["collar_h"])
+    collar = _fillet_try(collar, _bottom(collar), [0.8, 0.4])
+    spig = Pos(0, 0, D["collar_top"] + P["spigot_l"] / 2) * Cylinder(P["spigot_d"] / 2, P["spigot_l"])
     spig = _fillet_try(spig, _top(spig), [1.0, 0.5])
-    fin += spig
+    fin += collar + spig
     fin += Pos(0, 0, P["fin_bot"] - P["tip_l"] / 2) * Cone(P["fin_t"] / 2 + 6, 3, P["tip_l"])
     marks = None
     for dz in P["depths"]:
@@ -246,22 +261,30 @@ def _stake(P, D):
     a("label", "Nameplate", plate, C_DARK, "plastic", 2, "shell", E_HEAD)
     stripe = _curved_patch(R + 0.2, R + 0.55, -90.0, 44.0, 85.0, 87.0)
     a("stripe", "Nameplate accent line", stripe, C_ACCENT, "plastic", 2, "shell", E_HEAD)
-    # status light: clear lens in the front opening, lit green LED behind it
-    lens = Pos(0, -R + 1.2, 112.0) * Rot(90, 0, 0) * Cylinder(2.3, 3.6)
-    lens += Pos(0, -R - 0.6, 112.0) * Sphere(2.3)
-    lens &= Pos(0, -R + 1.0, 112.0) * Box(8, 7.4, 8)
-    a("lens", "Status light lens, clear", lens, C_LENS, "clear", 3, "shell", E_HEAD)
-    led = Pos(0, -R + 3.4, 112.0) * Rot(90, 0, 0) * Cylinder(1.8, 0.8)
-    a("led", "Status light (lit)", led, C_LED, "emissive", 3, "shell", E_HEAD)
-    # coax gland nut and dome on the -X boss; ePTFE vent membrane on the +Y boss
-    gx = -R - 9.0
-    nut = Pos(gx - 2.0, 0, P["coax_z"]) * Rot(0, 90, 0) * extrude(RegularPolygon(7.5, 6), amount=4.0, both=True)
-    nut = _fillet_try(nut, nut.edges().filter_by(Axis.X), [0.6, 0.3])
-    dome = Pos(gx - 6.5, 0, P["coax_z"]) * Rot(0, 90, 0) * Cylinder(5.5, 5.0)
+    # status light: clear lens in the lens hole, lit green LED behind it (model.py BOM 17)
+    la, lz = P["led_az"], P["led_z"]
+    lens = _rad(P["led_hole"] / 2 - 0.1, R - 3.0, R - 0.2, la, lz)
+    lx, ly = _polar(R - 0.2, la)
+    lens += Pos(lx, ly, lz) * Sphere(P["led_hole"] / 2 - 0.1)
+    lens &= _rad(4.0, R - 3.5, R + 1.0, la, lz)
+    a("lens", "Status light lens, clear", lens, C_LENS, "clear", 17, "shell", E_HEAD)
+    led = _rad(1.8, R - 3.4, R - 2.6, la, lz)
+    a("led", "Status light (lit)", led, C_LED, "emissive", 17, "shell", E_HEAD)
+    # coax gland nut and dome on the boss at gland_az; ePTFE vent membrane on the boss at vent_az
+    ga = P["gland_az"]
+    nut = _rad(7.5, R + 4, R + 8, ga, P["coax_z"])
+    nut = _fillet_try(nut, nut.edges(), [0.6, 0.3])
+    dome = _rad(5.5, R + 8, R + 13, ga, P["coax_z"])
     dome = _fillet_try(dome, dome.faces().sort_by(Axis.X)[0].edges(), [2.0, 1.2])
     a("gland", "Coax gland, IP68", nut + dome, C_BLACK, "plastic", 12, "shell", E_HEAD)
-    vent = Pos(0, R + 6.8, P["head_z0"] + 30) * Rot(90, 0, 0) * Cylinder(3.8, 0.4)
+    vx, vy = _polar(R + 3.2, P["vent_az"])
+    vent = _rad(3.8, R + 3.0, R + 3.4, P["vent_az"], P["vent_z"])
     a("vent", "Vent membrane, ePTFE", vent, C_PTFE, "fabric", 12, "shell", E_HEAD)
+
+    # LED series resistor on the board (BOM 17)
+    rl, rdia = P["res"]
+    resistor = Pos(P["res_x"], P["pcb"][1] / 2 + rdia / 2, P["pcb_z"] + P["res_dz"]) * Rot(0, 90, 0) * Cylinder(rdia / 2, rl)
+    a("resistor", "LED series resistor, 560 ohm", resistor, "#B45309", "plastic", 17, "internal", (0, -150, 60))
 
     # controller board inside the head
     pcb, module, comps, ufl = _board(P)
@@ -284,8 +307,12 @@ def _stake(P, D):
     ends = Pos(0, 0, cz + cl / 2 - 0.4) * Cylinder(cr - 0.8, 0.8) + Pos(0, 0, cz - cl / 2 + 0.4) * Cylinder(cr - 0.8, 0.8)
     ends += Pos(0, 0, cz + cl / 2 + 0.6) * Cylinder(2.2, 1.2)
     a("cellends", "LiFePO4 cell terminals", ends, C_METAL, "metal", 5, "internal", E_CELL)
-    holder = Pos(0, 0, cz) * (Cylinder(11, cl) - Cylinder(cr + 0.25, cl + 2))
+    st = D["spigot_top"]
+    holder = Pos(0, 0, st + 6.5) * Cylinder(11, 3) + Pos(0, 0, (st + 8 + D["cell_top"] + 1) / 2) * (
+        Cylinder(11, D["cell_top"] + 1 - st - 8) - Cylinder(cr + 0.25, D["cell_top"] + 3 - st - 8))
     holder -= Pos(0, -11, cz) * Box(9.0, 8.0, cl - 12)
+    for sy in (-1, 1):
+        holder += Pos(0, sy * 8, st + 2.5) * Box(4, 4, 5)                  # legs onto the spigot top
     a("holder", "Cell holder", holder, C_DARK, "plastic", 5, "internal", E_CELL)
 
     # stake tube, PVC, eased ends
@@ -332,17 +359,24 @@ def _stake(P, D):
     ax = rx + rc + P["ant_d"] / 2 + 1
     ant = Pos(ax, 0, P["ant_center_z"]) * Cylinder(P["ant_d"] / 2, P["ant_len"])
     ant = _fillet_try(ant, ant.edges(), [3.0, 2.0, 1.0])
-    clip = Pos(ax - 3, 0, D["rod_top"] - 30) * Box(12, 12, 16)
-    clip = _fillet_try(clip, clip.edges(), [1.5, 0.8])
-    a("antenna", "Sleeve dipole antenna and rod clip", ant + clip, C_DARK, "plastic", 4, "rod", (0, 0, 0))
-    run_up = D["ant_bot"] - P["coax_z"]
-    coax = Pos(ax, 0, P["coax_z"] + run_up / 2) * Cylinder(P["coax_d"] / 2, run_up)
-    span = (gx - 9.0) - ax
-    coax += Pos(ax + span / 2, 0, P["coax_z"]) * Rot(0, 90, 0) * Cylinder(P["coax_d"] / 2, abs(span))
-    coax += Pos(ax, 0, P["coax_z"]) * Sphere(P["coax_d"] / 2)
-    ties = [Pos((rx + ax) / 2, 0, z) * Box(ax - rx + 6, 10.5, 3.0) for z in (250.0, 450.0, 650.0, 850.0)]
-    ties = [t - Pos(rx, 0, t.center().Z) * Cylinder(rc, 5) - Pos(ax, 0, t.center().Z) * Cylinder(P["coax_d"] / 2, 5)
-            for t in ties]
+    a("antenna", "Sleeve dipole antenna (915 MHz)", ant, C_DARK, "plastic", 4, "rod", (0, 0, 0))
+    clips = []
+    for zc in P["clip_z"]:                                    # two printed clips, as model.py
+        c = Pos((rx - 6 + ax + P["ant_d"] / 2 + 2) / 2, 0, zc) * Box(ax + P["ant_d"] / 2 + 2 - (rx - 6), 12, 12)
+        c = _fillet_try(c, c.edges(), [1.5, 0.8])
+        c -= Pos(rx, 0, zc) * Cylinder(rc + 0.1, 14) + Pos(ax, 0, zc) * Cylinder(P["ant_d"] / 2 + 0.1, 14)
+        clips.append(c)
+    a("clips", "Antenna clips, printed (2)", _union(clips), C_ACCENT, "plastic", 4, "rod", (0, 0, 0))
+    cx_ = rx + rc + P["coax_d"] / 2
+    gx, gy = _polar(R + 22, ga)
+    coax = _rad(P["coax_d"] / 2, R + 13, R + 22, ga, P["coax_z"]) + Pos(gx, gy, P["coax_z"]) * Sphere(P["coax_d"] / 2)
+    run = math.hypot(cx_ - gx, -gy)
+    az = math.degrees(math.atan2(-gy, cx_ - gx))
+    coax += Pos(gx, gy, P["coax_z"]) * Rot(0, 0, az) * Rot(0, 90, 0) * Pos(0, 0, run / 2) * Cylinder(P["coax_d"] / 2, run)
+    coax += Pos(cx_, 0, P["coax_z"]) * Sphere(P["coax_d"] / 2)
+    coax += Pos(cx_, 0, (P["coax_z"] + D["ant_bot"]) / 2) * Cylinder(P["coax_d"] / 2, D["ant_bot"] - P["coax_z"])
+    tc = (rx - rc + cx_ + P["coax_d"] / 2) / 2
+    ties = [Pos(tc, 0, z) * (Cylinder(6.4, 2.5) - Cylinder(5.6, 3.0)) for z in P["tie_z"]]
     a("coax", "Coax lead, RG174", coax, C_BLACK, "rubber", 4, "rod", (0, 0, 0))
     a("ties", "Cable ties", _union(ties), C_BLACK, "plastic", 12, "rod", (0, 0, 0))
     return out

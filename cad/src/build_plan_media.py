@@ -23,6 +23,7 @@ from model import PARAMS as P, derived, build_components, slot_tool_components, 
 OUT = ROOT / "docs" / "05-build-plan"
 DWG = ROOT / "cad" / "drawings"
 DATE = "2026-10-01"
+DATE2 = "2026-10-02"          # revision date for the decisions of 2026-10-02
 D = derived(P)
 C = build_components(P)
 T = slot_tool_components(P)
@@ -31,7 +32,7 @@ COL = {"probe": "#7C3AED", "ec": "#D4A017", "sleeve": "#111827", "temp": "#2563E
        "fin_back": "#64748B", "tube": "#D1D5DB", "holder": "#A16207", "cell": "#C2410C", "body": "#E5E7EB",
        "gland": "#374151", "ctrl": "#16A34A", "oring": "#111827", "panel": "#1E3A8A", "cap": "#F3F4F6",
        "fix": "#B45309", "rod": "#EA580C", "flag": "#F97316", "clips": "#0F766E", "antenna": "#374151",
-       "coax": "#111827", "blade": "#4B5563", "handle": "#111827", "collars": "#9CA3AF", "stop": "#0F766E",
+       "coax": "#111827", "blade": "#4B5563", "handle": "#111827", "collars": "#9CA3AF", "stop": "#0F766E", "led": "#22C55E",
        "soil": "#B7A58E"}
 
 
@@ -77,7 +78,8 @@ def made():
         "cell": part("LiFePO4 cell", C["cell"].shape, COL["cell"]),
         "body": part("Head body", C["body"].shape, COL["body"]),
         "gland": part("Coax gland", C["gland"].shape, COL["gland"]),
-        "ctrl": part("Controller board", C["ctrl"].shape, COL["ctrl"]),
+        "led": part("Status LED, green", C["led"].shape, COL["led"]),
+        "ctrl": part("Controller board, with the LED resistor", S("ctrl", "resistor"), COL["ctrl"]),
         "oring": part("O-ring", C["oring"].shape, COL["oring"]),
         "panel": part("Solar panel", C["panel"].shape, COL["panel"]),
         "cap": part("Head cap", C["cap"].shape, COL["cap"]),
@@ -89,7 +91,7 @@ def made():
     }
 
 
-ORDER = ["probes", "ec", "temp", "fin_front", "fin_back", "tube", "holder", "cell", "body", "gland", "ctrl",
+ORDER = ["probes", "ec", "temp", "fin_front", "fin_back", "tube", "holder", "cell", "body", "gland", "led", "ctrl",
          "oring", "panel", "cap", "fix", "rod", "clips", "antenna", "coax"]
 
 
@@ -102,7 +104,7 @@ def overview():
     hx, hz = 380, -380
     off = {"probes": (70, 40, 0), "ec": (70, 0, -70), "temp": (115, 0, 0), "fin_front": (0, 0, 0),
            "fin_back": (-70, -40, 0), "tube": (190, 0, -190), "holder": (270, 0, -170), "cell": (320, 0, -170),
-           "body": (hx, 0, hz), "gland": (hx + 140, 30, hz + 40), "ctrl": (hx, 0, hz + 120), "oring": (hx, 0, hz + 175),
+           "body": (hx, 0, hz), "gland": (hx + 140, 30, hz + 40), "led": (hx + 60, -220, hz + 110), "ctrl": (hx, 0, hz + 120), "oring": (hx, 0, hz + 175),
            "cap": (hx, 0, hz + 205), "fix": (hx, 0, hz + 300), "panel": (hx, 0, hz + 350),
            "rod": (-200, 0, -900), "clips": (-200, 0, -860), "antenna": (-200, 0, -820), "coax": (-120, 0, -980)}
     parts = []
@@ -235,10 +237,15 @@ def sheets():
                "Gland boss 14 dia with an 8.2 mm hole, 60 up, toward the marker rod",
                "  and 30 degrees round toward the front (away from the board).",
                "Vent boss 12 dia with a 4 mm hole, 42 up, at the back right.",
+               "LED lens hole 5.2 dia through the wall, 60 up, front right, at least",
+               "  45 degrees round from the gland and the vent.",
                "Press the inserts in with a soldering iron at about 220 C, flush.",
                "Check: the rim is flat (no gap under a straightedge) for the O-ring;",
-               "  the board slides down both guides without force."],
-        **base))
+               "  the board slides down both guides without force; the LED's 5.8 mm",
+               "  flange sits against the inside wall and cannot pass the hole."],
+        rev="P2", revisions=[("P1", "Making sketch for the prototype build plan", DATE, "AC"),
+                             ("P2", "LED lens hole added (status light decided 2026-10-02)", DATE2, "AC")],
+        **{**base, "date": DATE2}))
 
     # 107 head cap
     out.append(bv.component_sheet(
@@ -530,8 +537,8 @@ def steps():
        "Epoxy on the spigot and inside the tube end; leads through the tube first; push down until it sits on the collar",
        elev=15, azim=-60, label_done=False)
     body = M["body"]
-    st(5, [body], [mv(M["gland"], (-35, -20, 0))], "gland, inserts and vent into the head body",
-       "Gland through its boss, locknut inside; vent membrane on the inside over the 4 mm hole; inserts already in",
+    st(5, [body], [mv(M["gland"], (-35, -20, 0)), mv(M["led"], (40, -40, 0))], "gland, vent and status LED into the head body",
+       "Gland through its boss, locknut inside; vent membrane over the 4 mm hole; LED pressed into its lens hole, flange inside",
        elev=20, azim=-95, label_done=False)
     stake = fin_all + [M["tube"]]
 
@@ -543,18 +550,18 @@ def steps():
             if sh is not None and sh.volume > 1e-3:
                 out_.append(Part(p.name, sh, p.color, None, p.explode, p.alpha))
         return out_
-    st(6, short(stake), [mv(Part("Head body with gland", S("body", "gland", "inserts"), COL["body"], None, (0, 0, 0), 1.0), (0, 0, 120))],
+    st(6, short(stake), [mv(Part("Head body with gland", S("body", "gland", "inserts", "led"), COL["body"], None, (0, 0, 0), 1.0), (0, 0, 120))],
        "head body onto the tube",
        "Top of the stake shown. Leads through the floor hole first; epoxy in the socket; gland toward the marker rod side",
        elev=15, azim=-60, label_done=False)
-    hb = part("Head body with gland", S("body", "gland", "inserts"), COL["body"])
+    hb = part("Head body with gland", S("body", "gland", "inserts", "led"), COL["body"])
     stake_h = stake + [hb]
     st(7, short(stake_h, -110), [mv(part("Cell holder with cell", S("holder", "cell"), COL["cell"]), (0, 0, 260))],
        "cell holder and cell down into the tube",
        "Hold point: safety stops S1 and S2 first. Lower the holder on its cord through the floor hole to the spigot top",
        elev=18, azim=-60, label_done=False)
     st(8, short(stake_h), [mv(M["ctrl"], (0, 0, 110))], "controller board into the guides",
-       "Top of the stake shown. Plug in the cell, probe, electrode and temperature leads; slide the board down both slots",
+       "Top of the stake shown. Plug in the cell, probe, electrode, temperature and LED leads; slide the board down both slots",
        elev=22, azim=-60, label_done=False)
     st(9, [M["cap"]], [mv(M["panel"], (40, 0, 60))], "panel into the cap",
        "Lead through the roof hole; a bead of outdoor sealant round the recess; press the panel in and let it cure",
@@ -636,7 +643,8 @@ def wiring():
     blk(52, 26, 13, 10, "Load switch", "sensor supply", "#16A34A")
     blk(72, 40, 14, 16, "Wio-E5 module", "on its breakout;\nLoRaWAN, ADC,\ntimers", "#0F766E")
     blk(72, 24, 14, 10, "EC drive", "5 kHz square wave,\n330 Ω reference", "#16A34A")
-    blk(97, 45, 19, 11, "Antenna", "dipole on the rod,\nlead through the gland", RF)
+    blk(97, 45, 19, 11, "Antenna", "915 MHz dipole on the rod,\nlead through the gland", RF)
+    blk(49.2, 41.2, 8.6, 8.2, "LED", "green,\n560 Ω", "#22C55E")
     blk(97, 7, 19, 31, "", "", "#7C3AED")
     ax.text(106.5, 35.5, "In the fin", ha="center", va="top", fontsize=9, fontweight="bold", color=INK)
     ax.text(106.5, 31.5, "Upper probe (150)\nLower probe (300)\nTemperature probe\n(DS18B20)\nEC rods (2)",
@@ -648,6 +656,7 @@ def wiring():
     wire([(58.5, 51), (58.5, 36)], RED, 1.4)
     wire([(73.5, 40), (73.5, 38.2), (67.5, 38.2), (67.5, 31), (65, 31)], GRY, 1.2); lab(68.2, 34.5, "enable", GRY)
     wire([(79, 40), (79, 34)], GRY, 1.2); lab(79.6, 37, "drive", GRY)
+    wire([(57.8, 45), (72, 45)], GRY, 1.2); lab(65.2, 46.7, "LED drive", GRY, "center")
     wire([(86, 51), (97, 51)], RF, 1.2); lab(91.5, 53, "u.FL pigtail", RF, "center")
     wire([(86, 29), (97, 29)], BLU); lab(91.5, 31, "EC rods,\n0.25 mm²", BLU, "center")
     wire([(86, 43), (93.5, 43), (93.5, 35), (97, 35)], BLU); lab(87.3, 39.6, "probe\nsignals", BLU)

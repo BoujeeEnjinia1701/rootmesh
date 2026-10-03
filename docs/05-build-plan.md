@@ -3,9 +3,9 @@ doc_id: RMS-BLD-001
 title: RootMesh prototype build plan
 project: RootMesh
 doc_type: Build plan
-version: "0.1"
+version: "0.2"
 status: Draft
-date: '2026-10-01'
+date: '2026-10-02'
 author: Amish Chadha
 license: CERN-OHL-S-2.0
 revisions:
@@ -13,6 +13,10 @@ revisions:
     date: '2026-10-01'
     author: Amish Chadha
     change: First build plan, with pictures by component and step; design made constructable (RMS-DDR-003)
+  - version: "0.2"
+    date: '2026-10-02'
+    author: Amish Chadha
+    change: "Decisions of 2026-10-02 carried into the plan and pictures: 915 MHz dipole and US915 gateway, cell chosen, status LED and its resistor"
 ---
 
 # RootMesh prototype build plan
@@ -23,13 +27,13 @@ revisions:
 
 ![Figure 1. Every stake component, pulled apart and numbered in build order](05-build-plan/overview.png)
 
-*Figure 1. The 19 stake components, pulled apart and numbered in build order. The marker rod and antenna lead are drawn shortened.*
+*Figure 1. The 20 stake components, pulled apart and numbered in build order. The marker rod and antenna lead are drawn shortened.*
 
 ![Figure 2. The slot tool, pulled apart](05-build-plan/overview-tool.png)
 
 *Figure 2. The slot tool, one per pilot set, used to cut the path for the fin before each stake goes in.*
 
-The prototype is one RootMesh sensor stake, installed in a trial bed of soil, and the steel slot tool that prepares the ground for it. The stake is a flat sensor fin pushed into the soil, carrying two moisture probes, a temperature probe and two steel electrodes; a short plastic pipe above it holds a small lithium iron phosphate cell; and a printed head just above the ground holds the controller board under a cap that carries the solar panel. The antenna stands on a flagged fibreglass marker rod beside the stake. Figure 1 shows the 19 stake components in the order you make or fit them. Eight are made in a small workshop: the two halves of the fin, the head body and cap, the cell holder and the two antenna clips are 3D printed, the pipe is cut to length, and the two electrodes are cut and pointed from stainless rod. The slot tool (Figure 2) is a steel blade, a round bar handle, two shaft collars and a printed depth stop. Everything else is bought: the probes, temperature probe, cell, panel, electronic modules, antenna, O-ring, gland, inserts, screws, rod and flag. The work is 3D printing, sawing, drilling and grinding steel bar, gluing with epoxy, and soldering bought modules together. The parts cost about $59 a stake and $281 for a pilot set of three stakes, a gateway and a slot tool, from the bill of materials.
+The prototype is one RootMesh sensor stake, installed in a trial bed of soil, and the steel slot tool that prepares the ground for it. The stake is a flat sensor fin pushed into the soil, carrying two moisture probes, a temperature probe and two steel electrodes; a short plastic pipe above it holds a small lithium iron phosphate cell; and a printed head just above the ground holds the controller board under a cap that carries the solar panel. The antenna stands on a flagged fibreglass marker rod beside the stake. Figure 1 shows the 20 stake components in the order you make or fit them. Eight are made in a small workshop: the two halves of the fin, the head body and cap, the cell holder and the two antenna clips are 3D printed, the pipe is cut to length, and the two electrodes are cut and pointed from stainless rod. The slot tool (Figure 2) is a steel blade, a round bar handle, two shaft collars and a printed depth stop. Everything else is bought: the probes, temperature probe, cell, panel, electronic modules, antenna, status LED, O-ring, gland, inserts, screws, rod and flag. The work is 3D printing, sawing, drilling and grinding steel bar, gluing with epoxy, and soldering bought modules together. The parts cost about $59.15 a stake and $281.45 for a pilot set of three stakes, a gateway and a slot tool, from the bill of materials.
 
 > **Safety:** The stake holds a lithium iron phosphate cell of about 1.9 Wh and its charger. Keep the cell out of its holder until section 6 says otherwise, never charge it below 0 °C or above 45 °C, and never leave a first build charging unattended. The slot tool is a pointed steel blade struck with a mallet: wear eye protection and gloves and keep feet clear of the point. Grinding steel throws sparks; grind away from anything that burns. Epoxy and printing ASA give off fumes; work in a ventilated space and wear nitrile gloves with epoxy. The fin tip and electrodes are sharp: cover them when the stake is not in the ground.
 
@@ -181,7 +185,7 @@ The bottom end sits on the fin collar, 106 mm below the soil surface, glued over
 
 **Check before moving on.** The cell slides in by hand; the holder drops through a 28 mm hole and down the tube without catching.
 
-### 3.7 Head body, with its gland, vent and inserts
+### 3.7 Head body, with its gland, vent, status LED and inserts
 
 ![Figure 13. Making sketch of the head body](../cad/drawings/RMS-DWG-106.png)
 
@@ -197,6 +201,7 @@ The bottom end sits on the fin collar, 106 mm below the soil surface, glued over
 4. Press an M3 brass heat-set insert into each boss hole with a soldering iron at about 220 °C, until it sits flush with the rim.
 5. Fit the antenna gland through the 8.2 mm hole in the gland boss, 60 mm up the body, on the left, turned 30 degrees toward the front, with its seal outside and its locknut inside; tighten the locknut by hand and a quarter turn.
 6. Stick the ePTFE vent membrane on the inside of the body over the 4 mm vent hole at the back right, 42 mm up, pressing it flat round its edge.
+7. Check the 5.2 mm lens hole through the wall at the front right, 60 mm up and at least 45 degrees round from the gland and the vent. Press the 5 mm green LED into it from inside until its 5.8 mm flange sits against the inside wall; the flange is larger than the hole, so the LED cannot fall out. Run a thin bead of epoxy round the flange on the inside and leave its two leads long.
 
 **How it fits the parts next to it.**
 
@@ -228,10 +233,11 @@ The carrier board in the bill of materials is a custom board, which is TRL 4 wor
 
 | Module | What to buy |
 | --- | --- |
-| Radio and controller | STM32WLE5-class LoRaWAN module (Seeed Wio-E5 or similar) on its maker's small breakout, for the band of the pilot region |
+| Radio and controller | STM32WLE5-class LoRaWAN module (Seeed Wio-E5 or similar) on its maker's small breakout, set to the US915 band plan (902 to 928 MHz) |
 | Charger | Single-cell lithium iron phosphate solar charger (CN3058E class), charge voltage 3.6 V, with a temperature input that stops charging below 0 °C and above 45 °C, and a 3.3 V output or a 3.3 V regulator after it |
 | Load switch | A small high-side switch that the controller turns on to power the sensors for about 1 s per reading |
 | EC drive | Two controller pins driving the electrodes through a 330 Ω reference resistor, with both sides of the resistor wired to analog inputs |
+| Status light | One 560 Ω, 0.25 W axial resistor in series with the green LED, on one controller pin: about 2 mA when lit. The controller blinks it once for 0.1 s after each uplink and three times when a magnet or button wakes it, and at no other time |
 
 Wire it like this, with stranded copper, every joint soldered and sleeved, and a plug-in header for each lead that leaves the board:
 
@@ -243,6 +249,7 @@ Wire it like this, with stranded copper, every joint soldered and sleeved, and a
 6. Probe outputs and the temperature probe's data wire to controller pins: 0.25 mm².
 7. Electrode leads to the EC drive: 0.25 mm².
 8. Controller to the antenna: the u.FL pigtail to the gland, then the lead through the gland.
+9. Controller pin to the 560 Ω resistor on the board, then a pair of 0.25 mm² leads from the resistor and the 3.3 V rail to the LED in the head wall, through a plug-in header.
 
 Check that the charger's temperature window really is 0 to 45 °C in its datasheet before buying: some chargers of this class fix a different window.
 
@@ -333,8 +340,9 @@ Buy to specification, not brand. Line numbers are those of the bill of materials
 
 - **Solar panel (line 1).** 5 V, 0.5 W monocrystalline, about 70 x 50 mm, epoxy or PET laminate, with its lead on the back near the centre.
 - **Controller (line 3).** The modules of Table 2 and a 56 x 40 mm prototype board (line 16).
-- **Antenna (line 4).** Half-wave sleeve dipole about 172 mm long and 10 mm across, for the band of the pilot region, with 1.2 m of RG174 lead and a u.FL to SMA pigtail.
-- **Cell (line 5).** 14500 size lithium iron phosphate cell, 3.2 V, 600 mAh, from a maker that publishes a datasheet, with a resettable (PTC) fuse and leads fitted.
+- **Antenna (line 4).** Half-wave sleeve dipole for 915 MHz, about 164 mm long and 10 mm across, with 1.2 m of RG174 lead and a u.FL to SMA pigtail.
+- **Cell (line 5).** 14500 size lithium iron phosphate cell, 3.2 V, 600 mAh, of the IFR14500EC class, whose datasheet rates discharge from -20 to +60 °C and charge from 0 to +60 °C (the charger still stops charging above 45 °C), with a resettable (PTC) fuse and leads fitted.
+- **Gateway (line 13).** Indoor eight-channel LoRaWAN gateway, US915 version, with its own antenna, Wi-Fi link and USB supply, joined to The Things Network. It is not part of the stake and stays indoors.
 - **Pipe (line 6).** 42 mm outside diameter PVC pressure pipe, 170 mm.
 - **Moisture probes (line 8).** Two capacitive soil moisture boards, version 1.2 class, and two TLC555 timers.
 - **Electrode rod (line 9).** 4 mm 316 stainless steel rod, 160 mm.
@@ -342,6 +350,7 @@ Buy to specification, not brand. Line numbers are those of the bill of materials
 - **Marker rod and flag (line 11).** 8 mm fibreglass rod, 1.2 m, with a high-visibility flag; four cable ties.
 - **Seals (line 12).** One 64 x 2 mm nitrile or EPDM O-ring; one M8 IP68 cable gland for 2 to 4 mm cable; an adhesive ePTFE vent membrane about 10 mm across; a desiccant sachet; two-part epoxy for potting.
 - **Fixings and bonding (line 16).** Two M3 brass heat-set inserts (short, for a 4.6 mm hole); two M3 x 12 stainless button-head screws and two EPDM sealing washers; structural two-part epoxy; 4 mm heat-shrink sleeve.
+- **Status LED and resistor (line 17).** One 5 mm green diffused LED with a 5.8 mm flange, and one 560 Ω, 0.25 W axial resistor.
 - **Slot tool (line 15).** 650 mm of 32 x 8 mm mild steel flat bar; 250 mm of 20 mm mild steel round bar; two 20 mm bore shaft collars with set screws; an M5 thumb screw about 40 mm long and an M5 nut.
 
 ## 4. Putting it together
@@ -372,11 +381,11 @@ Mix enough slow-setting epoxy for the whole fin. Fill every channel and pocket r
 
 Thread all the fin leads up through the tube. Coat the spigot and the inside of the tube's bottom end with structural epoxy and push the tube down until it sits on the collar all round. Wipe the joint and stand the fin upright until the epoxy cures.
 
-### Step 5: gland, inserts and vent into the head body
+### Step 5: gland, vent and status LED into the head body
 
 ![Step 5](05-build-plan/step-05.png)
 
-If not done in section 3.7: inserts flush in the bosses, gland through its boss with the locknut inside, vent membrane on the inside over its hole.
+If not done in section 3.7: inserts flush in the bosses, gland through its boss with the locknut inside, vent membrane on the inside over its hole, and the LED pressed into its lens hole with its flange against the inside wall.
 
 ### Step 6: head body onto the tube
 
@@ -394,7 +403,7 @@ Thread all the leads up through the floor hole. Coat the inside of the socket an
 
 ![Step 8](05-build-plan/step-08.png)
 
-Plug in the probe, temperature and electrode leads and the antenna pigtail, then slide the board down both guide slots until it stands on their ends. **Hold point:** safety stops S3 and S4 before the cell's plug goes in.
+Plug in the probe, temperature, electrode and LED leads and the antenna pigtail, then slide the board down both guide slots until it stands on their ends. **Hold point:** safety stops S3 and S4 before the cell's plug goes in.
 
 ### Step 9: panel into the cap
 
@@ -459,6 +468,7 @@ These are the checks a TRL 4 test report would record; this plan only lists them
 | Charge voltage | R7 | Bench supply at 5 V with a 200 mA limit in place of the panel, cell not plugged in; measure the charger output | 3.60 V, give or take 0.05 V |
 | Cold and hot charge stop | R7 | Cell plugged in; replace the cell temperature sensor with a resistor equal to its value at -1 °C, then at 46 °C | No charge current in either case (under 5 mA) |
 | Reports | R4, R13 | Join The Things Network and watch the gateway's console for an hour | Three uplinks an hour, decoded on the dashboard |
+| Status light | | Watch the head through one uplink, then wake the stake with a magnet | One blink of about 0.1 s after the uplink, three blinks on the wake, dark otherwise |
 | Head seal assembled | R8 | Look at the O-ring through the joint and at the panel bead | O-ring evenly squeezed all round; bead unbroken (the spray and immersion tests come later) |
 | Push force | R10 | Bathroom scale under the trial bed, or a hand force gauge on the head | Recorded; about 390 N expected in moist loam |
 | Installation time | R10 | Time steps 12 to 16 for one stake | 15 minutes or less |
@@ -475,7 +485,7 @@ Stop at each point. Carry on only when everything listed is true.
 - **S4. Before the cell is allowed to charge.** Both charge-stop checks of section 5 pass with the substitute resistors; then the cell's temperature sensor is reconnected.
 - **S5. First charge.** Attended the whole time, cap off, stake on the charging spot; cell temperature checked every 15 minutes. Stop if the cell passes 45 °C or 3.65 V. Never bypass the charge stop to gain energy.
 - **S6. Before the slot tool is struck.** Eye protection and gloves on; the depth stop tight; feet and hands clear of the blade; nobody else within 2 m. Store the tool with a cover over its point.
-- **S7. Before the radio transmits.** The dipole is connected and matches the pilot region's band. Transmitting without an antenna can damage the radio.
+- **S7. Before the radio transmits.** The 915 MHz dipole is connected, the radio is set to the US915 band plan and the gateway is the US915 version. Transmitting without an antenna can damage the radio.
 - **S8. Before any field installation (outside this plan).** Check with the grower where machinery will pass; keep the flag on the rod; pull stakes before tillage; never install where buried services may run without checking first.
 
 ## 7. Tools, skills and workspace
@@ -492,8 +502,8 @@ Stop at each point. Carry on only when everything listed is true.
 
 - Model and constructability checks: `cad/src/model.py` (`python cad/src/model.py --check`); STEP and STL exports in `cad/step/` and `cad/stl/`.
 - Pictures: `cad/src/build_plan_media.py`, using `.kit/build_views.py`; written to `docs/05-build-plan/` and `cad/drawings/RMS-DWG-101` to `RMS-DWG-110`.
-- General arrangement: `cad/drawings/RMS-DWG-001.pdf`, Rev P4.
-- Calculations: `docs/04-calcs/01-sizing.md` (RMS-CAL-001 v0.3) and `docs/04-calcs/sizing.py`; push force [G1], [G4]; cell depth [F2], [F4]; head air [F3]; cost [H1].
+- General arrangement: `cad/drawings/RMS-DWG-001.pdf`, Rev P5.
+- Calculations: `docs/04-calcs/01-sizing.md` (RMS-CAL-001 v0.5) and `docs/04-calcs/sizing.py`; push force [G1], [G4]; cell depth [F2], [F4]; head air [F3]; cost [H1].
 - Bill of materials: `bom/bom.csv`.
 - Decisions: `docs/decisions/0003-design-for-construction.md` (RMS-DDR-003), with RMS-DDR-001 and RMS-DDR-002.
-- Requirements: `docs/03-requirements.md` (RMS-REQ-001 v0.5).
+- Requirements: `docs/03-requirements.md` (RMS-REQ-001 v0.7).
